@@ -6,7 +6,7 @@
 #include <iostream>
 
 // define the screen resolution and keyboard macros
-#define SCREEN_WIDTH  960
+#define SCREEN_WIDTH  640
 #define SCREEN_HEIGHT 480
 #define KEY_DOWN(vk_code) ((GetAsyncKeyState(vk_code) & 0x8000) ? 1 : 0)
 #define KEY_UP(vk_code) ((GetAsyncKeyState(vk_code) & 0x8000) ? 0 : 1)
@@ -724,7 +724,11 @@ void do_game_logic(void)
 
 	if (bullet.show() == true)
 	{
+<<<<<<< HEAD
 		if (bullet.x_pos > SCREEN_WIDTH)
+=======
+		if (bullet.y_pos < -70)
+>>>>>>> parent of b6a392f... 종스크롤 변환
 			bullet.hide();
 		else
 			bullet.move();
