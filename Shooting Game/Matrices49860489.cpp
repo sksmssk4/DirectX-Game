@@ -227,7 +227,7 @@ void Enemy::init(float x, float y)
 
 void Enemy::move()
 {
-	y_pos += 2;
+	x_pos -= 2;
 
 }
 
@@ -298,7 +298,7 @@ void Bullet::active()
 
 void Bullet::move()
 {
-	y_pos -= 8;
+	x_pos += 8;
 }
 
 void Bullet::hide()
@@ -620,7 +620,7 @@ void init_game(void)
 	for (int i = 0; i<ENEMY_NUM; i++)
 	{
 
-		enemy[i].init((float)(rand() % 300), rand() % 200 - 300);
+		enemy[i].init((float)(SCREEN_WIDTH + (rand() % 300)), rand() % SCREEN_HEIGHT);
 	}
 
 	//총알 초기화 
@@ -701,8 +701,8 @@ void do_game_logic(void)
 	//적들 처리 
 	for (int i = 0; i<ENEMY_NUM; i++)
 	{
-		if (enemy[i].y_pos > 500)
-			enemy[i].init((float)(rand() % 300), rand() % 200 - 300);
+		if (enemy[i].x_pos < 0)
+			enemy[i].init((float)(rand() % 200 - 300), rand() % 300);
 		else
 			enemy[i].move();
 	}
@@ -724,7 +724,7 @@ void do_game_logic(void)
 
 	if (bullet.show() == true)
 	{
-		if (bullet.x_pos < -70)
+		if (bullet.x_pos > SCREEN_WIDTH)
 			bullet.hide();
 		else
 			bullet.move();
@@ -735,7 +735,7 @@ void do_game_logic(void)
 		{
 			if (bullet.check_collision(enemy[i].x_pos, enemy[i].y_pos) == true)
 			{
-				enemy[i].init((float)(rand() % 300), rand() % 200 - 300);
+				enemy[i].init(rand() % 200 - 300, (float)(rand() % 300));
 
 			}
 		}
@@ -835,7 +835,6 @@ void render_frame(void)
 
 	for (int i = 0; i<ENEMY_NUM; i++)
 	{
-
 		D3DXVECTOR3 position2(enemy[i].x_pos, enemy[i].y_pos, 0.0f);    // position at 50, 50 with no depth
 		d3dspt->Draw(sprite_enemy, &part2, &center2, &position2, D3DCOLOR_ARGB(255, 255, 255, 255));
 	}
