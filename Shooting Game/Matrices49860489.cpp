@@ -6,7 +6,7 @@
 #include <iostream>
 
 // define the screen resolution and keyboard macros
-#define SCREEN_WIDTH  640
+#define SCREEN_WIDTH  840
 #define SCREEN_HEIGHT 480
 #define KEY_DOWN(vk_code) ((GetAsyncKeyState(vk_code) & 0x8000) ? 1 : 0)
 #define KEY_UP(vk_code) ((GetAsyncKeyState(vk_code) & 0x8000) ? 0 : 1)
@@ -24,8 +24,6 @@ LPDIRECT3DDEVICE9 d3ddev;    // the pointer to the device class
 LPD3DXSPRITE d3dspt;    // the pointer to our Direct3D Sprite interface
 
 
-
-						// sprite declarations
 LPDIRECT3DTEXTURE9 sprite;    // the pointer to the sprite
 LPDIRECT3DTEXTURE9 sprite_score0;
 LPDIRECT3DTEXTURE9 sprite_score1;
@@ -86,23 +84,22 @@ bool sphere_collision_check(float x0, float y0, float size0, float x1, float y1,
 
 
 class Score : public entity {
-public :
-	bool score0_show = true;
-	bool score1_show;
-	bool score2_show;
-	bool score3_show;
-	bool score4_show;
-	bool score5_show;
+	public :
+		bool score0_show = true;
+		bool score1_show;
+		bool score2_show;
+		bool score3_show;
+		bool score4_show;
+		bool score5_show;
 
-	void init(float x, float y);
+		void init(float x, float y);
+		//void s1();
 };
 
 void Score::init(float x, float y)
 {
-
 	x_pos = x;
 	y_pos = y;
-
 }
 
 
@@ -139,8 +136,8 @@ void Hero::init(float x, float y)
 void Hero::hit_init(float x, float y)
 {
 
-	x_pos = x;
-	y_pos = y+50;
+	x_pos = x-20.0f;
+	y_pos = y;
 
 }
 
@@ -150,24 +147,24 @@ void Hero::move(int i)
 	switch (i)
 	{
 	case MOVE_UP:
-		y_pos -= 3;
+		y_pos -= 8.0f;
 		hit_Move = true;
 		break;
 
 	case MOVE_DOWN:
-		y_pos += 3;
+		y_pos += 8.0f;
 		hit_Move = true;
 		break;
 
 
 	case MOVE_LEFT:
-		x_pos -= 3;
+		x_pos -= 7.0f;
 		hit_Move = true;
 		break;
 
 
 	case MOVE_RIGHT:
-		x_pos += 3;
+		x_pos += 7.0f;
 		hit_Move = true;
 		break;
 
@@ -177,11 +174,10 @@ bool Hero::check_collision(float x, float y)
 {
 
 	//√Êµπ √≥∏Æ Ω√ 
-	if (sphere_collision_check(x_pos, y_pos, 32, x, y, 32) == true)
+	if (sphere_collision_check(x_pos, y_pos, 32.0f, x, y, 32.0f) == true)
 	{
 		hit_Show = true;
 		return true;
-
 	}
 	else {
 
@@ -255,13 +251,11 @@ public:
 
 bool Bullet::check_collision(float x, float y)
 {
-
 	//√Êµπ √≥∏Æ Ω√ 
-	if (sphere_collision_check(x_pos, y_pos, 32, x, y, 32) == true)
+	if (sphere_collision_check(x_pos, y_pos, 32.0f, x, y, 32.0f) == true)
 	{
 		bShow = false;
 		return true;
-
 	}
 	else {
 
@@ -298,7 +292,7 @@ void Bullet::active()
 
 void Bullet::move()
 {
-	x_pos += 8;
+	x_pos += 16;
 }
 
 void Bullet::hide()
@@ -432,6 +426,7 @@ void initD3D(HWND hWnd)
 		&d3ddev);
 
 	D3DXCreateSprite(d3ddev, &d3dspt);    // create the Direct3D Sprite object
+
 
 	D3DXCreateTextureFromFileEx(d3ddev,    // the device pointer
 		L"Panel3.png",    // the file name
@@ -614,12 +609,11 @@ void initD3D(HWND hWnd)
 void init_game(void)
 {
 	//∞¥√º √ ±‚»≠ 
-	hero.init(150, 300);
-	score.init(350, 20);
+	hero.init(150.0f, 300.0f);
+	score.init(350.0f, 20.0f);
 	//¿˚µÈ √ ±‚»≠ 
 	for (int i = 0; i<ENEMY_NUM; i++)
 	{
-
 		enemy[i].init((float)(SCREEN_WIDTH + (rand() % 300)), rand() % SCREEN_HEIGHT);
 	}
 
@@ -652,13 +646,10 @@ void do_game_logic(void)
 			if (bullet.check_collision(enemy[i].x_pos, enemy[i].y_pos) == true)
 			{
 				score.score0_show = false;
+				score.score1_show = true;
 			}
-			score.score1_show = true;
-
 		}
 	}
-	
-
 	
 	
 	
@@ -702,7 +693,7 @@ void do_game_logic(void)
 	for (int i = 0; i<ENEMY_NUM; i++)
 	{
 		if (enemy[i].x_pos < 0)
-			enemy[i].init((float)(rand() % 200 - 300), rand() % 300);
+			enemy[i].init((float)(SCREEN_WIDTH + (rand() % 300)), rand() % SCREEN_HEIGHT);
 		else
 			enemy[i].move();
 	}
@@ -717,18 +708,12 @@ void do_game_logic(void)
 			bullet.active();
 			bullet.init(hero.x_pos, hero.y_pos);
 		}
-
-
 	}
 
 
 	if (bullet.show() == true)
 	{
-<<<<<<< HEAD
 		if (bullet.x_pos > SCREEN_WIDTH)
-=======
-		if (bullet.y_pos < -70)
->>>>>>> parent of b6a392f... Ï¢ÖÏä§ÌÅ¨Î°§ Î≥ÄÌôò
 			bullet.hide();
 		else
 			bullet.move();
@@ -739,7 +724,7 @@ void do_game_logic(void)
 		{
 			if (bullet.check_collision(enemy[i].x_pos, enemy[i].y_pos) == true)
 			{
-				enemy[i].init(rand() % 200 - 300, (float)(rand() % 300));
+				enemy[i].init((float)(SCREEN_WIDTH + (rand() % 300)), rand() % SCREEN_HEIGHT);
 
 			}
 		}
@@ -863,6 +848,8 @@ void cleanD3D(void)
 	d3d->Release();
 
 	//∞¥√º «ÿ¡¶ 
+
+
 	sprite_score0->Release();
 	sprite_score1->Release();
 	sprite_score2->Release();
