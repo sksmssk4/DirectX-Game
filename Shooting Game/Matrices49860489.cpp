@@ -35,7 +35,7 @@ LPDIRECT3DTEXTURE9 sprite_hero;    // the pointer to the sprite
 LPDIRECT3DTEXTURE9 sprite_hero_hit;    // the pointer to the sprite
 LPDIRECT3DTEXTURE9 sprite_enemy;    // the pointer to the sprite
 LPDIRECT3DTEXTURE9 sprite_bullet;    // the pointer to the sprite
-
+LPDIRECT3DTEXTURE9 sprite_bullet2;
 
 
 									 // function prototypes
@@ -211,7 +211,7 @@ void Enemy::init(float x, float y)
 
 void Enemy::move()
 {
-	x_pos -= 2;
+	x_pos -= 3;
 
 }
 
@@ -283,12 +283,76 @@ void Bullet::hide()
 
 }
 
+class Bullet2 :public entity {
+
+public:
+
+	int hit_count = 0; // 총알이 적과 충돌한 횟수
+	bool bShow;
+	void init(float x, float y);
+	void move();
+	bool show();
+	void hide();
+	void active();
+	bool check_collision(float x, float y);
+
+};
+
+bool Bullet2::check_collision(float x, float y)
+{
+	//충돌 처리 시 
+	if (sphere_collision_check(x_pos, y_pos, 32.0f, x, y, 32.0f) == true)
+	{
+		hit_count = hit_count + 1; // 총알과 적이 충돌할 때마다 충돌횟수를 1씩 증가시킴
+		bShow = false;
+		return true;
+	}
+	else {
+
+		return false;
+	}
+}
+
+
+void Bullet2::init(float x, float y)
+{
+	x_pos = x;
+	y_pos = y;
+
+}
+
+bool Bullet2::show()
+{
+	return bShow;
+
+}
+
+
+void Bullet2::active()
+{
+	bShow = true;
+
+}
+
+void Bullet2::move()
+{
+	x_pos += 16;
+	y_pos -= 10;
+}
+
+void Bullet2::hide()
+{
+	bShow = false;
+
+}
+
 
 
 //객체 생성 
 Hero hero;
 Enemy enemy[ENEMY_NUM];
 Bullet bullet;
+Bullet2 bullet2;
 Score score;
 
 
@@ -572,6 +636,21 @@ void initD3D(HWND hWnd)
 		NULL,    // not using 256 colors
 		&sprite_bullet);    // load to sprite
 
+	D3DXCreateTextureFromFileEx(d3ddev,    // the device pointer
+		L"bullet.png",    // the file name
+		D3DX_DEFAULT,    // default width
+		D3DX_DEFAULT,    // default height
+		D3DX_DEFAULT,    // no mip mapping
+		NULL,    // regular usage
+		D3DFMT_A8R8G8B8,    // 32-bit pixels with alpha
+		D3DPOOL_MANAGED,    // typical memory handling
+		D3DX_DEFAULT,    // no filtering
+		D3DX_DEFAULT,    // no mip filtering
+		D3DCOLOR_XRGB(255, 0, 255),    // the hot-pink color key
+		NULL,    // no image info struct
+		NULL,    // not using 256 colors
+		&sprite_bullet2);    // load to sprite
+
 	return;
 }
 
@@ -589,6 +668,7 @@ void init_game(void)
 	
 	//총알 초기화 
 	bullet.init(hero.x_pos, hero.y_pos);
+	bullet2.init(hero.x_pos, hero.y_pos);
 }
 
 
@@ -624,7 +704,7 @@ void do_game_logic(void)
 	if (hero.show() == true)
 	{
 
-		if (bullet.bShow == true)
+		if (bullet.bShow == true && bullet2.bShow == true)
 		{
 			hero.hit_Show = false;
 
@@ -643,12 +723,14 @@ void do_game_logic(void)
 
 
 	//총알 처리 
-	if (bullet.show() == false)
+	if (bullet.show() == false && bullet2.show() == false)
 	{
 		if (KEY_DOWN(VK_SPACE))
 		{
 			bullet.active();
+			bullet2.active();
 			bullet.init(hero.x_pos, hero.y_pos);
+			bullet2.init(hero.x_pos, hero.y_pos+20);
 		}
 	}
 
@@ -669,32 +751,76 @@ void do_game_logic(void)
 				enemy[i].init((float)(SCREEN_WIDTH + (rand() % 300)), rand() % SCREEN_HEIGHT);
 				if (bullet.hit_count == 1) // 충돌 횟수 1회시
 				{
-					score.score0_show == false;
+					score.score0_show = false;
 					score.score1_show = true;
 				}
 				if (bullet.hit_count == 2) // 충돌 횟수 2회시
 				{
-					score.score1_show == false;
+					score.score1_show = false;
 					score.score2_show = true;
 				}
 				if (bullet.hit_count == 3) 
 				{
-					score.score2_show == false;
+					score.score2_show = false;
 					score.score3_show = true;
 				}
 				if (bullet.hit_count == 4)
 				{
-					score.score3_show == false;
+					score.score3_show = false;
 					score.score4_show = true;
 				}
 				if (bullet.hit_count == 5) // 충
 				{
-					score.score4_show == false;
+					score.score4_show = false;
 					score.score5_show = true;
 				}
 			}
 		}
 	}
+	if (bullet2.show() == true)
+	{
+		if (bullet2.x_pos > SCREEN_WIDTH)
+			bullet2.hide();
+		else
+			bullet2.move();
+
+
+		//충돌 처리(충돌한 횟수 체크해서 스코어 계산)
+		for (int i = 0; i < ENEMY_NUM; i++)
+		{
+			if (bullet2.check_collision(enemy[i].x_pos, enemy[i].y_pos) == true)
+			{
+				enemy[i].init((float)(SCREEN_WIDTH + (rand() % 300)), rand() % SCREEN_HEIGHT);
+				if (bullet2.hit_count == 1) // 충돌 횟수 1회시
+				{
+					score.score0_show = false;
+					score.score1_show = true;
+				}
+				if (bullet2.hit_count == 2) // 충돌 횟수 2회시
+				{
+					score.score1_show = false;
+					score.score2_show = true;
+				}
+				if (bullet2.hit_count == 3)
+				{
+					score.score2_show = false;
+					score.score3_show = true;
+				}
+				if (bullet2.hit_count == 4)
+				{
+					score.score3_show = false;
+					score.score4_show = true;
+				}
+				if (bullet2.hit_count == 5) // 충
+				{
+					score.score4_show = false;
+					score.score5_show = true;
+				}
+			}
+		}
+	}
+
+
 
 
 
@@ -797,7 +923,14 @@ void render_frame(void)
 		D3DXVECTOR3 position1(bullet.x_pos, bullet.y_pos, 0.0f);    // position at 50, 50 with no depth
 		d3dspt->Draw(sprite_bullet, &part1, &center1, &position1, D3DCOLOR_ARGB(255, 255, 255, 255));
 	}
-
+	if (bullet2.bShow == true)
+	{
+		RECT part1;
+		SetRect(&part1, 0, 0, 64, 64);
+		D3DXVECTOR3 center1(0.0f, 0.0f, 0.0f);    // center at the upper-left corner
+		D3DXVECTOR3 position1(bullet2.x_pos, bullet2.y_pos, 0.0f);    // position at 50, 50 with no depth
+		d3dspt->Draw(sprite_bullet2, &part1, &center1, &position1, D3DCOLOR_ARGB(255, 255, 255, 255));
+	}
 
 	////에네미 
 	RECT part2;
