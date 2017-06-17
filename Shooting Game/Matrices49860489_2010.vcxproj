@@ -31,6 +31,7 @@
     <ProjectGuid>{D3D09003-96D0-4629-88B8-122C0256058C}</ProjectGuid>
     <RootNamespace>Matrices49860489</RootNamespace>
     <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -372,6 +373,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="ClassDiagram.cd" />
     <None Include="DXUT\Optional\directx.ico" />
   </ItemGroup>
   <ItemGroup>
