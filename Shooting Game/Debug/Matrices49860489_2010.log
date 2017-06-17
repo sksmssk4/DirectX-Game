@@ -1,9 +1,8 @@
 ﻿  Matrices49860489.cpp
-c:\users\administrator.msdn-special\desktop\matrices49860489\matrices49860489.cpp(362): warning C4100: 'lpCmdLine': 참조되지 않은 정식 매개 변수입니다.
-c:\users\administrator.msdn-special\desktop\matrices49860489\matrices49860489.cpp(361): warning C4100: 'hPrevInstance': 참조되지 않은 정식 매개 변수입니다.
-c:\users\administrator.msdn-special\desktop\matrices49860489\matrices49860489.cpp(666): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\administrator.msdn-special\desktop\matrices49860489\matrices49860489.cpp(718): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\administrator.msdn-special\desktop\matrices49860489\matrices49860489.cpp(751): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-c:\users\administrator.msdn-special\desktop\matrices49860489\matrices49860489.cpp(793): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\administrator.msdn-special\desktop\matrices49860489\matrices49860489.cpp(426): warning C4100: 'lpCmdLine': 참조되지 않은 정식 매개 변수입니다.
+c:\users\administrator.msdn-special\desktop\matrices49860489\matrices49860489.cpp(425): warning C4100: 'hPrevInstance': 참조되지 않은 정식 매개 변수입니다.
+c:\users\administrator.msdn-special\desktop\matrices49860489\matrices49860489.cpp(843): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\administrator.msdn-special\desktop\matrices49860489\matrices49860489.cpp(885): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\administrator.msdn-special\desktop\matrices49860489\matrices49860489.cpp(927): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   Matrices49860489_2010.vcxproj -> C:\Users\Administrator.MSDN-SPECIAL\Desktop\Matrices49860489\Debug\Matrices49860489.exe
   Matrices49860489_2010.vcxproj -> C:\Users\Administrator.MSDN-SPECIAL\Desktop\Matrices49860489\Debug\Matrices49860489.pdb (Full PDB)

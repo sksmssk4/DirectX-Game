@@ -23,6 +23,38 @@ LPDIRECT3D9 d3d;    // the pointer to our Direct3D interface
 LPDIRECT3DDEVICE9 d3ddev;    // the pointer to the device class
 LPD3DXSPRITE d3dspt;    // the pointer to our Direct3D Sprite interface
 
+//문자열
+HRESULT D3DXCreateFont(
+	LPDIRECT3DDEVICE9 pDevice,
+	UINT Height, 
+	UINT Width, 
+	UINT Weight, 
+	UINT MipLevels, 
+	BOOL Italic, 
+	DWORD CharSet, 
+	DWORD OutputPrecision, 
+	DWORD Quality, 
+	DWORD PitchAndFamily,
+	LPCTSTR pFacename, 
+	LPD3DXFONT * ppFont
+);
+
+HRESULT D3DXCreateSprite(
+	LPDIRECT3DDEVICE9 pDevice,
+	LPD3DXSPRITE * ppSprite 
+);
+
+INT DrawText(
+	LPD3DXSPRITE pSprite,
+	LPCTSTR pString,
+	INT Count, 
+	LPRECT pRect,
+	DWORD Format,
+	D3DCOLOR Color 
+);
+
+ID3DXFont*   Font;
+ID3DXSprite*  Sprite;
 
 LPDIRECT3DTEXTURE9 sprite;    // the pointer to the sprite
 LPDIRECT3DTEXTURE9 sprite_score0;
@@ -36,9 +68,9 @@ LPDIRECT3DTEXTURE9 sprite_hero_hit;    // the pointer to the sprite
 LPDIRECT3DTEXTURE9 sprite_enemy;    // the pointer to the sprite
 LPDIRECT3DTEXTURE9 sprite_bullet;    // the pointer to the sprite
 LPDIRECT3DTEXTURE9 sprite_bullet2;
+LPDIRECT3DTEXTURE9 sprite_bullet3;
 
 
-									 // function prototypes
 void initD3D(HWND hWnd);    // sets up and initializes Direct3D
 void render_frame(void);    // renders a single frame
 void cleanD3D(void);		// closes Direct3D and releases memory
@@ -346,6 +378,69 @@ void Bullet2::hide()
 
 }
 
+class Bullet3 :public entity {
+
+public:
+
+	int hit_count = 0; // 총알이 적과 충돌한 횟수
+	bool bShow;
+	void init(float x, float y);
+	void move();
+	bool show();
+	void hide();
+	void active();
+	bool check_collision(float x, float y);
+
+};
+
+bool Bullet3::check_collision(float x, float y)
+{
+	//충돌 처리 시 
+	if (sphere_collision_check(x_pos, y_pos, 32.0f, x, y, 32.0f) == true)
+	{
+		hit_count = hit_count + 1; // 총알과 적이 충돌할 때마다 충돌횟수를 1씩 증가시킴
+		bShow = false;
+		return true;
+	}
+	else {
+
+		return false;
+	}
+}
+
+
+void Bullet3::init(float x, float y)
+{
+	x_pos = x;
+	y_pos = y;
+
+}
+
+bool Bullet3::show()
+{
+	return bShow;
+
+}
+
+
+void Bullet3::active()
+{
+	bShow = true;
+
+}
+
+void Bullet3::move()
+{
+	x_pos += 16;
+	y_pos += 10;
+}
+
+void Bullet3::hide()
+{
+	bShow = false;
+
+}
+
 
 
 //객체 생성 
@@ -353,6 +448,7 @@ Hero hero;
 Enemy enemy[ENEMY_NUM];
 Bullet bullet;
 Bullet2 bullet2;
+Bullet3 bullet3;
 Score score;
 
 
@@ -443,6 +539,10 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 // this function initializes and prepares Direct3D for use
 void initD3D(HWND hWnd)
 {
+	//문자열
+	D3DXCreateFont(pDevice, 25, 0, FW_BOLD, 1, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, "굴림체", &Font);
+	D3DXCreateSprite(pDevice, &Sprite);
+
 	d3d = Direct3DCreate9(D3D_SDK_VERSION);
 
 	D3DPRESENT_PARAMETERS d3dpp;
@@ -651,6 +751,24 @@ void initD3D(HWND hWnd)
 		NULL,    // not using 256 colors
 		&sprite_bullet2);    // load to sprite
 
+	D3DXCreateTextureFromFileEx(d3ddev,    // the device pointer
+		L"bullet.png",    // the file name
+		D3DX_DEFAULT,    // default width
+		D3DX_DEFAULT,    // default height
+		D3DX_DEFAULT,    // no mip mapping
+		NULL,    // regular usage
+		D3DFMT_A8R8G8B8,    // 32-bit pixels with alpha
+		D3DPOOL_MANAGED,    // typical memory handling
+		D3DX_DEFAULT,    // no filtering
+		D3DX_DEFAULT,    // no mip filtering
+		D3DCOLOR_XRGB(255, 0, 255),    // the hot-pink color key
+		NULL,    // no image info struct
+		NULL,    // not using 256 colors
+		&sprite_bullet3);    // load to sprite
+
+	
+	
+
 	return;
 }
 
@@ -661,14 +779,22 @@ void init_game(void)
 	hero.init(150.0f, 300.0f);
 	score.init(400.0f, 30.0f);
 	//적들 초기화 
+	float distance = 60;
 	for (int i = 0; i<ENEMY_NUM; i++)
 	{
-		enemy[i].init((float)(SCREEN_WIDTH + (rand() % 300)), rand() % SCREEN_HEIGHT);
+		//if (i < 5)
+		//{
+			
+			enemy[i].init((float)SCREEN_WIDTH + distance , distance);
+			distance += distance;
+		//}
+		//enemy[i].init((float)(SCREEN_WIDTH + (rand() % 300)), rand() % SCREEN_HEIGHT);
 	}
 	
 	//총알 초기화 
 	bullet.init(hero.x_pos, hero.y_pos);
 	bullet2.init(hero.x_pos, hero.y_pos);
+	bullet3.init(hero.x_pos, hero.y_pos);
 }
 
 
@@ -699,23 +825,26 @@ void do_game_logic(void)
 				hero.hit_init(hero.x_pos, (hero.y_pos) - 5);
 			}
 		}
-
 	}
 	if (hero.show() == true)
 	{
 
-		if (bullet.bShow == true && bullet2.bShow == true)
+		if (bullet.bShow == true)
 		{
 			hero.hit_Show = false;
 
 		}
 	}
 
+	float distance = 60;
 	//적들 처리 
 	for (int i = 0; i < ENEMY_NUM; i++)
 	{
 		if (enemy[i].x_pos < 0)
-			enemy[i].init((float)(SCREEN_WIDTH + (rand() % 300)), rand() % SCREEN_HEIGHT);
+		{
+			enemy[i].init((float)SCREEN_WIDTH + distance, distance);
+			distance += distance;
+		}
 		else
 			enemy[i].move();
 	}
@@ -723,14 +852,16 @@ void do_game_logic(void)
 
 
 	//총알 처리 
-	if (bullet.show() == false && bullet2.show() == false)
+	if (bullet.show() == false && bullet2.show() == false && bullet3.show() == false)
 	{
 		if (KEY_DOWN(VK_SPACE))
 		{
 			bullet.active();
 			bullet2.active();
+			bullet3.active();
 			bullet.init(hero.x_pos, hero.y_pos);
-			bullet2.init(hero.x_pos, hero.y_pos+20);
+			bullet2.init(hero.x_pos, hero.y_pos);
+			bullet3.init(hero.x_pos, hero.y_pos);
 		}
 	}
 
@@ -748,7 +879,7 @@ void do_game_logic(void)
 		{
 			if (bullet.check_collision(enemy[i].x_pos, enemy[i].y_pos) == true)
 			{
-				enemy[i].init((float)(SCREEN_WIDTH + (rand() % 300)), rand() % SCREEN_HEIGHT);
+				enemy[i].init((float)(SCREEN_WIDTH + (rand() % 300)), rand() % SCREEN_HEIGHT); // 적이 충돌되면 다시 랜덤으로 등장
 				if (bullet.hit_count == 1) // 충돌 횟수 1회시
 				{
 					score.score0_show = false;
@@ -791,7 +922,7 @@ void do_game_logic(void)
 			if (bullet2.check_collision(enemy[i].x_pos, enemy[i].y_pos) == true)
 			{
 				enemy[i].init((float)(SCREEN_WIDTH + (rand() % 300)), rand() % SCREEN_HEIGHT);
-				if (bullet2.hit_count == 1) // 충돌 횟수 1회시
+				if (bullet2.hit_count == 1 ) // 충돌 횟수 1회시
 				{
 					score.score0_show = false;
 					score.score1_show = true;
@@ -819,21 +950,63 @@ void do_game_logic(void)
 			}
 		}
 	}
+	if (bullet3.show() == true)
+	{
+		if (bullet3.x_pos > SCREEN_WIDTH)
+			bullet3.hide();
+		else
+			bullet3.move();
 
 
-
-
-
-	
-
-	
+		//충돌 처리(충돌한 횟수 체크해서 스코어 계산)
+		for (int i = 0; i < ENEMY_NUM; i++)
+		{
+			if (bullet3.check_collision(enemy[i].x_pos, enemy[i].y_pos) == true)
+			{
+				enemy[i].init((float)(SCREEN_WIDTH + (rand() % 300)), rand() % SCREEN_HEIGHT);
+				if (bullet3.hit_count == 1) // 충돌 횟수 1회시
+				{
+					score.score0_show = false;
+					score.score1_show = true;
+				}
+				if (bullet3.hit_count == 2) // 충돌 횟수 2회시
+				{
+					score.score1_show = false;
+					score.score2_show = true;
+				}
+				if (bullet3.hit_count == 3)
+				{
+					score.score2_show = false;
+					score.score3_show = true;
+				}
+				if (bullet3.hit_count == 4)
+				{
+					score.score3_show = false;
+					score.score4_show = true;
+				}
+				if (bullet3.hit_count == 5) // 충
+				{
+					score.score4_show = false;
+					score.score5_show = true;
+				}
+			}
+		}
+	}
 
 }
 
 
-// this is the function used to render a single frame
+// this is the function used to render a single frame디스플레이
 void render_frame(void)
 {
+	if (Sprite)
+		Sprite->Begin(D3DXSPRITE_ALPHABLEND | D3DXSPRITE_SORT_TEXTURE);
+	RECT rt = { 100,100,0,0 };
+	Font->DrawText(Sprite, TEXT("Hello World"), -1, &rt, DT_NOCLIP, D3DCOLOR_XRGB(0, 0, 0));
+	rt.top = 130;
+	Font->DrawText(Sprite, TEXT("문자출력 테스트"), -1, &rt, DT_NOCLIP, D3DCOLOR_XRGB(0, 0, 0));
+	Sprite->End();
+
 	// clear the window to a deep blue
 	d3ddev->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 
@@ -923,12 +1096,20 @@ void render_frame(void)
 		D3DXVECTOR3 position1(bullet.x_pos, bullet.y_pos, 0.0f);    // position at 50, 50 with no depth
 		d3dspt->Draw(sprite_bullet, &part1, &center1, &position1, D3DCOLOR_ARGB(255, 255, 255, 255));
 	}
-	if (bullet2.bShow == true)
+	if (bullet2.bShow == true)  //여기에요
 	{
 		RECT part1;
 		SetRect(&part1, 0, 0, 64, 64);
 		D3DXVECTOR3 center1(0.0f, 0.0f, 0.0f);    // center at the upper-left corner
 		D3DXVECTOR3 position1(bullet2.x_pos, bullet2.y_pos, 0.0f);    // position at 50, 50 with no depth
+		d3dspt->Draw(sprite_bullet2, &part1, &center1, &position1, D3DCOLOR_ARGB(255, 255, 255, 255));
+	}
+	if (bullet3.bShow == true) 
+	{
+		RECT part1;
+		SetRect(&part1, 0, 0, 64, 64);
+		D3DXVECTOR3 center1(0.0f, 0.0f, 0.0f);    // center at the upper-left corner
+		D3DXVECTOR3 position1(bullet3.x_pos, bullet3.y_pos, 0.0f);    // position at 50, 50 with no depth
 		d3dspt->Draw(sprite_bullet2, &part1, &center1, &position1, D3DCOLOR_ARGB(255, 255, 255, 255));
 	}
 
@@ -967,6 +1148,8 @@ void cleanD3D(void)
 	sprite_hero_hit->Release();
 	sprite_enemy->Release();
 	sprite_bullet->Release();
+	sprite_bullet2->Release();
+	sprite_bullet3->Release();
 
 	return;
 }
