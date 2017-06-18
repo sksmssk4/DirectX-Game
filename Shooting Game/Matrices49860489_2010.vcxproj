@@ -373,16 +373,30 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="ClassDiagram.cd" />
     <None Include="DXUT\Optional\directx.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Bg.cpp" />
+    <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="Bullet2.cpp" />
+    <ClCompile Include="Bullet3.cpp" />
+    <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="Hero.cpp" />
     <ClCompile Include="Matrices49860489.cpp" />
+    <ClCompile Include="Score.cpp" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Bg.h" />
+    <ClInclude Include="Bullet.h" />
+    <ClInclude Include="Bullet2.h" />
+    <ClInclude Include="Bullet3.h" />
+    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="entity.h" />
+    <ClInclude Include="Hero.h" />
     <CLInclude Include="resource.h" />
+    <ClInclude Include="Score.h" />
     <ResourceCompile Include="Matrices49860489.rc" />
   </ItemGroup>
   <ItemGroup>

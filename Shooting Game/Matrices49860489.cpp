@@ -5,10 +5,20 @@
 #include <d3dx9.h>
 #include <iostream>
 
+#include "entity.h"
+#include "Bg.h"
+#include "Score.h"
+#include "Hero.h"
+#include "Enemy.h"
+#include "Bullet.h"
+#include "Bullet2.h"
+#include "Bullet3.h"
+
 #include <mmsystem.h>
 #include <Digitalv.h>
 
 // define the screen resolution and keyboard macros
+
 #define SCREEN_WIDTH  840
 #define SCREEN_HEIGHT 480
 #define KEY_DOWN(vk_code) ((GetAsyncKeyState(vk_code) & 0x8000) ? 1 : 0)
@@ -21,6 +31,9 @@
 #pragma comment (lib, "d3dx9.lib")
 #pragma comment(lib, "Winmm.lib")
 // global declarations
+
+using namespace std;
+
 LPDIRECT3D9 d3d;    // the pointer to our Direct3D interface
 LPDIRECT3DDEVICE9 d3ddev;    // the pointer to the device class
 LPD3DXSPRITE d3dspt;    // the pointer to our Direct3D Sprite interface
@@ -45,11 +58,11 @@ LPDIRECT3DTEXTURE9 sprite_bullet;    // the pointer to the sprite
 LPDIRECT3DTEXTURE9 sprite_bullet2;
 LPDIRECT3DTEXTURE9 sprite_bullet3;
 
-//ui bgm
+//음악파일 재생(ui)
 MCI_OPEN_PARMS mci_open;
 MCI_PLAY_PARMS mci_play;
 int dwID;
-//ingame bgm
+//음악파일 재생(ingame)
 MCI_OPEN_PARMS mci_open2;
 MCI_PLAY_PARMS mci_play2;
 int dwID2;
@@ -68,24 +81,6 @@ bool sphere_collision_check(float x0, float y0, float size0, float x1, float y1,
 // the WindowProc function prototype
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
-using namespace std;
-
-
-enum { MOVE_UP, MOVE_DOWN, MOVE_LEFT, MOVE_RIGHT };
-
-
-//기본 클래스 
-class entity {
-
-public:
-	float x_pos;
-	float y_pos;
-	int status;
-
-	int HP;
-};
-
-
 bool sphere_collision_check(float x0, float y0, float size0, float x1, float y1, float size1)
 {
 
@@ -95,357 +90,7 @@ bool sphere_collision_check(float x0, float y0, float size0, float x1, float y1,
 		return false;
 }
 
-class Bg :public entity {
-public:
-	void init(float x, float y);
-	void move();
-};
-
-void Bg::init(float x, float y)
-{
-	x_pos = x;
-	y_pos = y;
-}
-
-void Bg::move()
-{
-	x_pos -= 10.0f;
-
-	if (x_pos <= -840) x_pos = SCREEN_WIDTH;
-}
-
-
-class Score:public entity {
-public:
-	bool score0_show = true;
-	bool score1_show = false;
-	bool score2_show = false;
-	bool score3_show = false;
-	bool score4_show = false;
-	bool score5_show = false;
-
-	void init(float x, float y);
-};
-
-void Score::init(float x, float y)
-{
-	x_pos = x;
-	y_pos = y;
-}
-
-//주인공 클래스 
-class Hero :public entity {
-
-public:
-	bool hit_Show;
-	bool hit_Move = false;
-	bool show();
-	void hide();
-	void active();
-
-	void fire();
-	void super_fire();
-	void move(int i);
-	void init(float x, float y);
-	void hit_init(float x, float y);
-	bool check_collision(float x, float y);
-};
-
-void Hero::init(float x, float y)
-{
-
-	x_pos = x;
-	y_pos = y;
-
-}
-
-void Hero::hit_init(float x, float y)
-{
-
-	x_pos = x-20.0f;
-	y_pos = y;
-
-}
-
-void Hero::move(int i)
-{
-	
-	switch (i)
-	{
-	case MOVE_UP:
-		y_pos -= 8.0f;
-		hit_Move = true;
-		break;
-
-	case MOVE_DOWN:
-		y_pos += 8.0f;
-		hit_Move = true;
-		break;
-
-
-	case MOVE_LEFT:
-		x_pos -= 7.0f;
-		hit_Move = true;
-		break;
-
-
-	case MOVE_RIGHT:
-		x_pos += 7.0f;
-		hit_Move = true;
-		break;
-
-	}
-}
-bool Hero::check_collision(float x, float y)
-{
-
-	//충돌 처리 시 
-	if (sphere_collision_check(x_pos, y_pos, 32.0f, x, y, 32.0f) == true)
-	{
-		hit_Show = true;
-		return true;
-	}
-	else {
-		return false;
-	}
-}
-
-bool Hero::show()
-{
-	return hit_Show;
-}
-
-void Hero::hide()
-{
-	hit_Show = false;
-}
-
-void Hero::active()
-{
-	hit_Show = true;
-}
-
-
-
-// 적 클래스 
-class Enemy :public entity {
-
-public:
-	void fire();
-	void init(float x, float y);
-	void move();
-
-};
-
-void Enemy::init(float x, float y)
-{
-
-	x_pos = x;
-	y_pos = y;
-
-}
-
-
-void Enemy::move()
-{
-	x_pos -= 3;
-
-}
-
-
-
-
-
-
-// 총알 클래스 
-class Bullet :public entity {
-
-public:
-
-	int hit_count = 0; // 총알이 적과 충돌한 횟수
-	bool bShow;
-	void init(float x, float y);
-	void move();
-	bool show();
-	void hide();
-	void active();
-	bool check_collision(float x, float y);
-
-};
-
-bool Bullet::check_collision(float x, float y)
-{
-	//충돌 처리 시 
-	if (sphere_collision_check(x_pos, y_pos, 32.0f, x, y, 32.0f) == true)
-	{
-		hit_count = hit_count+1; // 총알과 적이 충돌할 때마다 충돌횟수를 1씩 증가시킴
-		bShow = false;
-		return true;
-	}
-	else {
-
-		return false;
-	}
-}
-
-
-void Bullet::init(float x, float y)
-{
-	x_pos = x;
-	y_pos = y;
-
-}
-
-bool Bullet::show()
-{
-	return bShow;
-
-}
-
-
-void Bullet::active()
-{
-	bShow = true;
-
-}
-
-void Bullet::move()
-{
-	x_pos += 16;
-}
-
-void Bullet::hide()
-{
-	bShow = false;
-
-}
-
-class Bullet2 :public entity {
-
-public:
-
-	int hit_countt = 0; // 총알이 적과 충돌한 횟수
-	bool bShow;
-	void init(float x, float y);
-	void move();
-	bool show();
-	void hide();
-	void active();
-	bool check_collision(float x, float y);
-
-};
-
-bool Bullet2::check_collision(float x, float y)
-{
-	//충돌 처리 시 
-	if (sphere_collision_check(x_pos, y_pos, 32.0f, x, y, 32.0f) == true)
-	{
-		hit_countt = hit_countt + 1; // 총알과 적이 충돌할 때마다 충돌횟수를 1씩 증가시킴
-		bShow = false;
-		return true;
-	}
-	else {
-
-		return false;
-	}
-}
-
-
-void Bullet2::init(float x, float y)
-{
-	x_pos = x;
-	y_pos = y;
-
-}
-
-bool Bullet2::show()
-{
-	return bShow;
-
-}
-
-
-void Bullet2::active()
-{
-	bShow = true;
-
-}
-
-void Bullet2::move()
-{
-	x_pos += 16;
-	y_pos -= 10;
-}
-
-void Bullet2::hide()
-{
-	bShow = false;
-
-}
-
-class Bullet3 :public entity {
-
-public:
-
-	int hit_counttt = 0; // 총알이 적과 충돌한 횟수
-	bool bShow;
-	void init(float x, float y);
-	void move();
-	bool show();
-	void hide();
-	void active();
-	bool check_collision(float x, float y);
-
-};
-
-bool Bullet3::check_collision(float x, float y)
-{
-	//충돌 처리 시 
-	if (sphere_collision_check(x_pos, y_pos, 32.0f, x, y, 32.0f) == true)
-	{
-		hit_counttt = hit_counttt + 1; // 총알과 적이 충돌할 때마다 충돌횟수를 1씩 증가시킴
-		bShow = false;
-		return true;
-	}
-	else {
-
-		return false;
-	}
-}
-
-
-void Bullet3::init(float x, float y)
-{
-	x_pos = x;
-	y_pos = y;
-
-}
-
-bool Bullet3::show()
-{
-	return bShow;
-
-}
-
-
-void Bullet3::active()
-{
-	bShow = true;
-
-}
-
-void Bullet3::move()
-{
-	x_pos += 16;
-	y_pos += 10;
-}
-
-void Bullet3::hide()
-{
-	bShow = false;
-
-}
-
+enum { MOVE_UP, MOVE_DOWN, MOVE_LEFT, MOVE_RIGHT };
 
 
 //객체 생성 
@@ -1077,10 +722,10 @@ void render_frame(void)
 
 	if (Scene1 == true)
 	{
-
+		//ui 배경음 재생
 		mciSendCommand(NULL, MCI_OPEN, MCI_OPEN_ELEMENT | MCI_OPEN_TYPE, (DWORD)(LPVOID)&mci_open);
 		dwID = mci_open.wDeviceID;
-		mciSendCommand(dwID, MCI_PLAY, MCI_NOTIFY, (DWORD)(LPVOID)&mci_play); // MCI_NOTIFY(loop해제) , REPEAT
+		mciSendCommand(dwID, MCI_PLAY, MCI_NOTIFY, (DWORD)(LPVOID)&mci_play);
 
 		d3ddev->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 
@@ -1113,10 +758,13 @@ void render_frame(void)
 	}
 	if (Scene2 == true )
 	{
+		//ui 배경음 끄기
+		mciSendCommand(1, MCI_SEEK, MCI_SEEK_TO_START, (DWORD)(LPVOID)NULL);
 
+		//ingame 배경음 재생
 		mciSendCommand(NULL, MCI_OPEN, MCI_OPEN_ELEMENT | MCI_OPEN_TYPE, (DWORD)(LPVOID)&mci_open2);
 		dwID2 = mci_open2.wDeviceID;
-		mciSendCommand(dwID2, MCI_PLAY, MCI_NOTIFY, (DWORD)(LPVOID)&mci_play2); // MCI_NOTIFY(loop해제) , REPEAT
+		mciSendCommand(dwID2, MCI_PLAY, MCI_DGV_PLAY_REPEAT, (DWORD)(LPVOID)&mci_play2); // MCI_NOTIFY(loop해제) , REPEAT
 		// clear the window to a deep blue
 		d3ddev->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 

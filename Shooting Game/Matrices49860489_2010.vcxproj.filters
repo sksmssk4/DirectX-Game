@@ -13,12 +13,16 @@
     <None Include="DXUT\Optional\directx.ico">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Matrices49860489.cpp" />
-  </ItemGroup>
-  <ItemGroup>
+    <ClCompile Include="Bg.cpp" />
+    <ClCompile Include="Score.cpp" />
+    <ClCompile Include="Hero.cpp" />
+    <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="Bullet2.cpp" />
+    <ClCompile Include="Bullet3.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CLInclude Include="resource.h">
@@ -27,6 +31,14 @@
     <ResourceCompile Include="Matrices49860489.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+    <ClInclude Include="entity.h" />
+    <ClInclude Include="Bg.h" />
+    <ClInclude Include="Score.h" />
+    <ClInclude Include="Hero.h" />
+    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="Bullet.h" />
+    <ClInclude Include="Bullet2.h" />
+    <ClInclude Include="Bullet3.h" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>
