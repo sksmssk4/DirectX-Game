@@ -4,7 +4,9 @@
 #include <d3d9.h>
 #include <d3dx9.h>
 #include <iostream>
-#include <tchar.h>
+
+#include <mmsystem.h>
+#include <Digitalv.h>
 
 // define the screen resolution and keyboard macros
 #define SCREEN_WIDTH  840
@@ -13,11 +15,11 @@
 #define KEY_UP(vk_code) ((GetAsyncKeyState(vk_code) & 0x8000) ? 0 : 1)
 
 #define ENEMY_NUM 10 
-
+#define BG_NUM 10
 // include the Direct3D Library file
 #pragma comment (lib, "d3d9.lib")
 #pragma comment (lib, "d3dx9.lib")
-
+#pragma comment(lib, "Winmm.lib")
 // global declarations
 LPDIRECT3D9 d3d;    // the pointer to our Direct3D interface
 LPDIRECT3DDEVICE9 d3ddev;    // the pointer to the device class
@@ -29,6 +31,7 @@ LPDIRECT3DTEXTURE9 sprite_title;
 
 //ingame
 LPDIRECT3DTEXTURE9 sprite;    // the pointer to the sprite
+LPDIRECT3DTEXTURE9 sprite_inbg;
 LPDIRECT3DTEXTURE9 sprite_score0;
 LPDIRECT3DTEXTURE9 sprite_score1;
 LPDIRECT3DTEXTURE9 sprite_score2;
@@ -42,6 +45,14 @@ LPDIRECT3DTEXTURE9 sprite_bullet;    // the pointer to the sprite
 LPDIRECT3DTEXTURE9 sprite_bullet2;
 LPDIRECT3DTEXTURE9 sprite_bullet3;
 
+//ui bgm
+MCI_OPEN_PARMS mci_open;
+MCI_PLAY_PARMS mci_play;
+int dwID;
+//ingame bgm
+MCI_OPEN_PARMS mci_open2;
+MCI_PLAY_PARMS mci_play2;
+int dwID2;
 
 void initD3D(HWND hWnd);    // sets up and initializes Direct3D
 void render_frame(void);    // renders a single frame
@@ -83,6 +94,26 @@ bool sphere_collision_check(float x0, float y0, float size0, float x1, float y1,
 	else
 		return false;
 }
+
+class Bg :public entity {
+public:
+	void init(float x, float y);
+	void move();
+};
+
+void Bg::init(float x, float y)
+{
+	x_pos = x;
+	y_pos = y;
+}
+
+void Bg::move()
+{
+	x_pos -= 10.0f;
+
+	if (x_pos <= -840) x_pos = SCREEN_WIDTH;
+}
+
 
 class Score:public entity {
 public:
@@ -424,6 +455,7 @@ Bullet bullet;
 Bullet2 bullet2;
 Bullet3 bullet3;
 Score score;
+Bg bg[BG_NUM];
 
 
 // the entry point for any Windows program
@@ -462,7 +494,16 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	// enter the main loop:
 
 	MSG msg;
+	//배경음
+	mci_open.lpstrElementName = L"UI_bgm.mp3";
+	mci_open.lpstrDeviceType = L"MPEGvideo"; //wav 파일일 경우 WaveAudio
+	
+	mci_open2.lpstrElementName = L"INGAME_bgm.mp3";
+	mci_open2.lpstrDeviceType = L"MPEGvideo";
+	
+	
 
+	
 	while (TRUE)
 	{
 		DWORD starting_point = GetTickCount();
@@ -566,6 +607,22 @@ void initD3D(HWND hWnd)
 		NULL,
 		NULL,
 		&sprite_title);
+
+
+	D3DXCreateTextureFromFileEx(d3ddev,
+		L"inbg.png",
+		840,
+		481,
+		D3DX_DEFAULT,
+		NULL,
+		D3DFMT_A8R8G8B8,
+		D3DPOOL_MANAGED,
+		D3DX_DEFAULT,
+		D3DX_DEFAULT,
+		D3DCOLOR_XRGB(255, 0, 255),
+		NULL,
+		NULL,
+		&sprite_inbg);
 
 
 	D3DXCreateTextureFromFileEx(d3ddev,    // the device pointer
@@ -678,8 +735,8 @@ void initD3D(HWND hWnd)
 
 	D3DXCreateTextureFromFileEx(d3ddev,   
 		L"hero.png",  
-		D3DX_DEFAULT,   
-		D3DX_DEFAULT,    
+		70,   
+		64,    
 		D3DX_DEFAULT,    
 		NULL,   
 		D3DFMT_A8R8G8B8,    
@@ -776,16 +833,18 @@ void initD3D(HWND hWnd)
 
 void init_game(void)
 {
+	
 	//객체 초기화 
+	
+	bg[0].init(0.0f, 0.0f);
+	bg[1].init(SCREEN_WIDTH, 0.0f);
+	
 	hero.init(150.0f, 300.0f);
 	score.init(400.0f, 30.0f);
 	//적들 초기화 
 	float distance = 60;
 	for (int i = 0; i < ENEMY_NUM; i++)
 	{
-		//if (i < 5)
-		//{
-
 		enemy[i].init((float)SCREEN_WIDTH + distance, distance);
 		distance += distance;
 		//}
@@ -803,6 +862,14 @@ void do_game_logic(void)
 {
 	if (Scene2 == true)
 	{
+
+		for (int i = 0; i < BG_NUM; i++)
+		{
+			bg[i].init(bg[i].x_pos, 0.0f);
+			bg[i].x_pos;
+			bg[i].move();
+		}
+
 		//주인공 처리 
 		if (KEY_DOWN(VK_UP))
 			hero.move(MOVE_UP);
@@ -1010,6 +1077,11 @@ void render_frame(void)
 
 	if (Scene1 == true)
 	{
+
+		mciSendCommand(NULL, MCI_OPEN, MCI_OPEN_ELEMENT | MCI_OPEN_TYPE, (DWORD)(LPVOID)&mci_open);
+		dwID = mci_open.wDeviceID;
+		mciSendCommand(dwID, MCI_PLAY, MCI_NOTIFY, (DWORD)(LPVOID)&mci_play); // MCI_NOTIFY(loop해제) , REPEAT
+
 		d3ddev->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 
 		d3ddev->BeginScene();    // begins the 3D scene
@@ -1018,8 +1090,8 @@ void render_frame(void)
 		
 		RECT part; // ui 배경
 		SetRect(&part, 0, 0, 900, 480);
-		D3DXVECTOR3 center(0.0f, 0.0f, 0.0f);
-		D3DXVECTOR3 position(-30.0f, 0.0f, 0.0f);
+		D3DXVECTOR3 center(30.0f, 0.0f, 0.0f);
+		D3DXVECTOR3 position(0.0f, 0.0f, 0.0f);
 		d3dspt->Draw(sprite_bg, &part, &center, &position, D3DCOLOR_ARGB(255, 255, 255, 255));
 
 		RECT tpart;// ui 타이틀
@@ -1039,8 +1111,12 @@ void render_frame(void)
 
 
 	}
-	if (Scene2 == true)
+	if (Scene2 == true )
 	{
+
+		mciSendCommand(NULL, MCI_OPEN, MCI_OPEN_ELEMENT | MCI_OPEN_TYPE, (DWORD)(LPVOID)&mci_open2);
+		dwID2 = mci_open2.wDeviceID;
+		mciSendCommand(dwID2, MCI_PLAY, MCI_NOTIFY, (DWORD)(LPVOID)&mci_play2); // MCI_NOTIFY(loop해제) , REPEAT
 		// clear the window to a deep blue
 		d3ddev->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 
@@ -1048,6 +1124,14 @@ void render_frame(void)
 
 		d3dspt->Begin(D3DXSPRITE_ALPHABLEND);
 
+		RECT ipart;// ingame 배경
+		SetRect(&ipart, 0, 0, 840, 480);
+		D3DXVECTOR3 icenter(0.0f, 0.0f, 0.0f);
+		for (int i = 0; i < BG_NUM; i++)
+		{
+			D3DXVECTOR3 iposition(bg[i].x_pos, 0.0f, 0.0f);
+			d3dspt->Draw(sprite_inbg, &ipart, &icenter, &iposition, D3DCOLOR_ARGB(255, 255, 255, 255));
+		}
 		/////////////////////////////////////스코어//////////////////////////////////////////
 
 		if (score.score0_show == true) // score 0점을 불러온다
@@ -1107,7 +1191,7 @@ void render_frame(void)
 		if (hero.hit_Show == false)
 		{											 //주인공 
 			RECT part;
-			SetRect(&part, 0, 0, 64, 64);
+			SetRect(&part, 0, 0, 64, 70);
 			D3DXVECTOR3 center(0.0f, 0.0f, 0.0f);    // center at the upper-left corner
 			D3DXVECTOR3 position(hero.x_pos, hero.y_pos, 0.0f);    // position at 50, 50 with no depth
 			d3dspt->Draw(sprite_hero, &part, &center, &position, D3DCOLOR_ARGB(255, 255, 255, 255));
@@ -1157,7 +1241,7 @@ void render_frame(void)
 			D3DXVECTOR3 position2(enemy[i].x_pos, enemy[i].y_pos, 0.0f);    // position at 50, 50 with no depth
 			d3dspt->Draw(sprite_enemy, &part2, &center2, &position2, D3DCOLOR_ARGB(255, 255, 255, 255));
 		}
-
+	
 
 
 		d3dspt->End();    // end sprite drawing
@@ -1178,7 +1262,10 @@ void cleanD3D(void)
 	d3ddev->Release();
 	d3d->Release();
 
+	sprite_bg->Release();
+	sprite_title->Release();
 	//객체 해제 
+	sprite_inbg->Release();
 	sprite_hero->Release();
 	sprite_hero_hit->Release();
 	sprite_enemy->Release();
