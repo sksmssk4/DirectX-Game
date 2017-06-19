@@ -8,7 +8,6 @@ class Bullet3 :public entity {
 
 public:
 
-	int hit_counttt = 0; // 총알이 적과 충돌한 횟수
 	bool bShow;
 	void init(float x, float y);
 	void move();

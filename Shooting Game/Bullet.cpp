@@ -7,7 +7,6 @@ bool Bullet::check_collision(float x, float y)
 	//충돌 처리 시 
 	if (sphere_collision_check(x_pos, y_pos, 32.0f, x, y, 32.0f) == true)
 	{
-		hit_count = hit_count + 1; // 총알과 적이 충돌할 때마다 충돌횟수를 1씩 증가시킴
 		bShow = false;
 		return true;
 	}
