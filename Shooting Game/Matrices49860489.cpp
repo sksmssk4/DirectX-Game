@@ -42,7 +42,8 @@ LPD3DXSPRITE d3dspt;    // the pointer to our Direct3D Sprite interface
 //ui
 LPDIRECT3DTEXTURE9 sprite_bg;
 LPDIRECT3DTEXTURE9 sprite_title;
-
+LPDIRECT3DTEXTURE9 sprite_press;
+LPDIRECT3DTEXTURE9 sprite_press2;
 //ingame
 LPDIRECT3DTEXTURE9 sprite;    // the pointer to the sprite
 LPDIRECT3DTEXTURE9 sprite_inbg;
@@ -52,10 +53,25 @@ LPDIRECT3DTEXTURE9 sprite_score2;
 LPDIRECT3DTEXTURE9 sprite_score3;
 LPDIRECT3DTEXTURE9 sprite_score4;
 LPDIRECT3DTEXTURE9 sprite_score5;
-LPDIRECT3DTEXTURE9 sprite_hero;    // the pointer to the sprite
-LPDIRECT3DTEXTURE9 sprite_hero_hit;    // the pointer to the sprite
-LPDIRECT3DTEXTURE9 sprite_enemy;    // the pointer to the sprite
-LPDIRECT3DTEXTURE9 sprite_bullet;    // the pointer to the sprite
+//주인공 대기 스프라이트
+LPDIRECT3DTEXTURE9 sprite_hero; 
+LPDIRECT3DTEXTURE9 sprite_hero2;
+LPDIRECT3DTEXTURE9 sprite_hero3;
+LPDIRECT3DTEXTURE9 sprite_hero4;
+//주인공 피격 스프라이트
+LPDIRECT3DTEXTURE9 sprite_hero_hit;
+//주인공 스킬 스프라이트
+LPDIRECT3DTEXTURE9 sprite_hero_skill;
+LPDIRECT3DTEXTURE9 sprite_hero_skill2;
+LPDIRECT3DTEXTURE9 sprite_hero_skill3;
+LPDIRECT3DTEXTURE9 sprite_hero_skill4;
+LPDIRECT3DTEXTURE9 sprite_hero_skill5;
+LPDIRECT3DTEXTURE9 sprite_hero_skill6;
+LPDIRECT3DTEXTURE9 sprite_hero_skill7;
+LPDIRECT3DTEXTURE9 sprite_hero_skill8;
+
+LPDIRECT3DTEXTURE9 sprite_enemy;   
+LPDIRECT3DTEXTURE9 sprite_bullet;  
 LPDIRECT3DTEXTURE9 sprite_bullet2;
 LPDIRECT3DTEXTURE9 sprite_bullet3;
 
@@ -225,9 +241,9 @@ void initD3D(HWND hWnd)
 
 
 	D3DXCreateTextureFromFileEx(d3ddev,
-		L"BackGround.png",
-		D3DX_DEFAULT,
-		D3DX_DEFAULT,
+		L"BackGround2.png",
+		840,
+		480,
 		D3DX_DEFAULT,
 		NULL,
 		D3DFMT_A8R8G8B8,
@@ -254,6 +270,35 @@ void initD3D(HWND hWnd)
 		NULL,
 		&sprite_title);
 
+	D3DXCreateTextureFromFileEx(d3ddev,
+		L"press.png",
+		562,
+		77,
+		D3DX_DEFAULT,
+		NULL,
+		D3DFMT_A8R8G8B8,
+		D3DPOOL_MANAGED,
+		D3DX_DEFAULT,
+		D3DX_DEFAULT,
+		D3DCOLOR_XRGB(255, 0, 255),
+		NULL,
+		NULL,
+		&sprite_press);
+
+	D3DXCreateTextureFromFileEx(d3ddev,
+		L"press2.png",
+		562,
+		77,
+		D3DX_DEFAULT,
+		NULL,
+		D3DFMT_A8R8G8B8,
+		D3DPOOL_MANAGED,
+		D3DX_DEFAULT,
+		D3DX_DEFAULT,
+		D3DCOLOR_XRGB(255, 0, 255),
+		NULL,
+		NULL,
+		&sprite_press2);
 
 	D3DXCreateTextureFromFileEx(d3ddev,
 		L"inbg.png",
@@ -378,11 +423,11 @@ void initD3D(HWND hWnd)
 		&sprite_score5);
 	//////////////////////////////////////////////////////////////////////
 
-
+	//주인공 대기 스프라이트
 	D3DXCreateTextureFromFileEx(d3ddev,   
 		L"hero.png",  
-		70,   
-		64,    
+		64,
+		100,
 		D3DX_DEFAULT,    
 		NULL,   
 		D3DFMT_A8R8G8B8,    
@@ -393,7 +438,66 @@ void initD3D(HWND hWnd)
 		NULL,    
 		NULL,    
 		&sprite_hero);   
+	D3DXCreateTextureFromFileEx(d3ddev,
+		L"hero2.png",
+		64,
+		100,
+		D3DX_DEFAULT,
+		NULL,
+		D3DFMT_A8R8G8B8,
+		D3DPOOL_MANAGED,
+		D3DX_DEFAULT,
+		D3DX_DEFAULT,
+		D3DCOLOR_XRGB(255, 0, 255),
+		NULL,
+		NULL,
+		&sprite_hero2);
+	D3DXCreateTextureFromFileEx(d3ddev,
+		L"hero3.png",
+		64,
+		100,
+		D3DX_DEFAULT,
+		NULL,
+		D3DFMT_A8R8G8B8,
+		D3DPOOL_MANAGED,
+		D3DX_DEFAULT,
+		D3DX_DEFAULT,
+		D3DCOLOR_XRGB(255, 0, 255),
+		NULL,
+		NULL,
+		&sprite_hero3);
+	D3DXCreateTextureFromFileEx(d3ddev,
+		L"hero4.png",
+		64,
+		100,
+		D3DX_DEFAULT,
+		NULL,
+		D3DFMT_A8R8G8B8,
+		D3DPOOL_MANAGED,
+		D3DX_DEFAULT,
+		D3DX_DEFAULT,
+		D3DCOLOR_XRGB(255, 0, 255),
+		NULL,
+		NULL,
+		&sprite_hero4);
 
+	//주인공 스킬 스프라이트
+	D3DXCreateTextureFromFileEx(d3ddev,
+		L"hero_skill.png",
+		99,
+		156,
+		D3DX_DEFAULT,
+		NULL,
+		D3DFMT_A8R8G8B8,
+		D3DPOOL_MANAGED,
+		D3DX_DEFAULT,
+		D3DX_DEFAULT,
+		D3DCOLOR_XRGB(255, 0, 255),
+		NULL,
+		NULL,
+		&sprite_hero_skill);
+
+	//주인공 피격
 	D3DXCreateTextureFromFileEx(d3ddev,    // the device pointer
 		L"hero_hit.png",    // the file name
 		D3DX_DEFAULT,    // default width
@@ -469,9 +573,6 @@ void initD3D(HWND hWnd)
 		NULL,    // no image info struct
 		NULL,    // not using 256 colors
 		&sprite_bullet3);    // load to sprite
-
-	
-	
 
 	return;
 }
@@ -572,12 +673,12 @@ void do_game_logic(void)
 
 		if (KEY_DOWN(VK_CONTROL)) //넉백스킬(신라천정)
 		{
-			
+			sndPlaySoundA("C:\\Users\\Administrator.MSDN-SPECIAL\\Desktop\\Matrices49860489\\Skill.wav", SND_ASYNC | SND_NODEFAULT | SND_ASYNC);
 			for (int i = 0; i < ENEMY_NUM; i++)
 			{
 				if (enemy[i].x_pos < 400)
 				{
-					enemy[i].init(enemy[i].x_pos + 400, enemy[i].y_pos);
+					enemy[i].init(enemy[i].x_pos+600, enemy[i].y_pos);
 				}
 			}
 		}
@@ -593,7 +694,6 @@ void do_game_logic(void)
 				{
 					if (bullet[i].show() == false && bullet2[i].show() == false && bullet3[i].show() == false)
 					{
-
 						bullet[i].active();
 						bullet2[i].active();
 						bullet3[i].active();
@@ -772,8 +872,8 @@ void render_frame(void)
 		d3dspt->Begin(D3DXSPRITE_ALPHABLEND);
 		
 		RECT part; // ui 배경
-		SetRect(&part, 0, 0, 900, 480);
-		D3DXVECTOR3 center(30.0f, 0.0f, 0.0f);
+		SetRect(&part, 0, 0, 840, 480);
+		D3DXVECTOR3 center(0.0f, 0.0f, 0.0f);
 		D3DXVECTOR3 position(0.0f, 0.0f, 0.0f);
 		d3dspt->Draw(sprite_bg, &part, &center, &position, D3DCOLOR_ARGB(255, 255, 255, 255));
 
@@ -783,6 +883,20 @@ void render_frame(void)
 		D3DXVECTOR3 tposition(160.0f, 50.0f, 0.0f);
 		d3dspt->Draw(sprite_title, &tpart, &tcenter, &tposition, D3DCOLOR_ARGB(255, 255, 255, 255));
 
+		RECT ppart; // ui PRESS
+		SetRect(&ppart, 0, 0, 562, 77);
+		D3DXVECTOR3 pcenter(0.0f, 0.0f, 0.0f);
+		D3DXVECTOR3 pposition(130.0f, 360.0f, 0.0f);
+		static int pcounter = 0;
+		pcounter = pcounter + 1;
+		if (pcounter >= 42) pcounter = 0;
+		if(pcounter < 22)
+			d3dspt->Draw(sprite_press, &ppart, &pcenter, &pposition, D3DCOLOR_ARGB(255, 255, 255, 255));
+		if(pcounter > 22)
+			d3dspt->Draw(sprite_press2, &ppart, &pcenter, &pposition, D3DCOLOR_ARGB(255, 255, 255, 255));
+		
+	
+		
 
 		d3dspt->End();    // end sprite drawing
 
@@ -796,6 +910,7 @@ void render_frame(void)
 	}
 	if (Scene2 == true )
 	{
+		bool skill = false;
 		//ui 배경음 끄기
 		mciSendCommand(1, MCI_SEEK, MCI_SEEK_TO_START, (DWORD)(LPVOID)NULL);
 
@@ -873,16 +988,35 @@ void render_frame(void)
 			D3DXVECTOR3 Sposition(score.x_pos, score.y_pos, 0.0f);
 			d3dspt->Draw(sprite_score5, &Spart, &Scenter, &Sposition, D3DCOLOR_ARGB(255, 255, 255, 255));
 		}
-		/////////////////////////////////////스코어끝/////////////////////////////////////////
+		//주인공 대기 스프라이트
+		static int counter = 0;
 		if (hero.hit_Show == false)
-		{											 //주인공 
-			RECT part;
-			SetRect(&part, 0, 0, 64, 70);
-			D3DXVECTOR3 center(0.0f, 0.0f, 0.0f);    // center at the upper-left corner
-			D3DXVECTOR3 position(hero.x_pos, hero.y_pos, 0.0f);    // position at 50, 50 with no depth
-			d3dspt->Draw(sprite_hero, &part, &center, &position, D3DCOLOR_ARGB(255, 255, 255, 255));
+		{							
+			RECT part1;
+			SetRect(&part1, 0, 0, 64, 100);
+			D3DXVECTOR3 center1(0.0f, 0.0f, 0.0f);
+			D3DXVECTOR3 position1(hero.x_pos, hero.y_pos, 0.0f);
+			
+			counter += 1 ;
+			if (counter >= 20) counter = 0;
+		
+			switch (counter / 5)
+			{
+			case 0:
+				d3dspt->Draw(sprite_hero, &part1, &center1, &position1, D3DCOLOR_ARGB(255, 255, 255, 255));
+				break;
+			case 1:
+				d3dspt->Draw(sprite_hero2, &part1, &center1, &position1, D3DCOLOR_ARGB(255, 255, 255, 255));
+				break;
+			case 2:
+				d3dspt->Draw(sprite_hero3, &part1, &center1, &position1, D3DCOLOR_ARGB(255, 255, 255, 255));
+				break;
+			case 3:
+				d3dspt->Draw(sprite_hero4, &part1, &center1, &position1, D3DCOLOR_ARGB(255, 255, 255, 255));
+				break;
+			}
 		}
-
+		//주인공 피격 스프라이트
 		if (hero.hit_Show == true)
 		{
 			RECT part_1;
@@ -890,6 +1024,23 @@ void render_frame(void)
 			D3DXVECTOR3 center_1(0.0f, 0.0f, 0.0f);
 			D3DXVECTOR3 position_1(hero.x_pos, hero.y_pos, 0.0f);
 			d3dspt->Draw(sprite_hero_hit, &part_1, &center_1, &position_1, D3DCOLOR_ARGB(255, 255, 255, 255));
+		}
+	
+		//주인공 스킬 스프라이트
+		if (KEY_DOWN(VK_CONTROL))
+		{
+			skill = true;
+		}
+		if (hero.hit_Show == false)
+		{
+			if (skill == true)
+			{
+				RECT part_1;
+				SetRect(&part_1, 0, 0, 64, 100);
+				D3DXVECTOR3 center_1(0.0f, 0.0f, 0.0f);
+				D3DXVECTOR3 position_1(hero.x_pos, hero.y_pos, 0.0f);
+				d3dspt->Draw(sprite_hero_skill, &part_1, &center_1, &position_1, D3DCOLOR_ARGB(255, 255, 255, 255));
+			}
 		}
 		////총알 
 		for (int i = 0; i < BULLET_NUM; i++)
@@ -958,10 +1109,18 @@ void cleanD3D(void)
 
 	sprite_bg->Release();
 	sprite_title->Release();
+	sprite_press->Release();
+	sprite_press2->Release();
 	//객체 해제 
 	sprite_inbg->Release();
+
 	sprite_hero->Release();
+	sprite_hero2->Release();
+	sprite_hero3->Release();
+	sprite_hero4->Release();
 	sprite_hero_hit->Release();
+	sprite_hero_skill->Release();
+
 	sprite_enemy->Release();
 	sprite_bullet->Release();
 	sprite_bullet2->Release();
