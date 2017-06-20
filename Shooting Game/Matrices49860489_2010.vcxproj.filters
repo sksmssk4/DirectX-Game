@@ -23,6 +23,7 @@
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Bullet2.cpp" />
     <ClCompile Include="Bullet3.cpp" />
+    <ClCompile Include="eBullet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CLInclude Include="resource.h">
@@ -39,6 +40,7 @@
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Bullet2.h" />
     <ClInclude Include="Bullet3.h" />
+    <ClInclude Include="eBullet.h" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

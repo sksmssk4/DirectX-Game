@@ -380,6 +380,7 @@
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Bullet2.cpp" />
     <ClCompile Include="Bullet3.cpp" />
+    <ClCompile Include="eBullet.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Hero.cpp" />
     <ClCompile Include="Matrices49860489.cpp" />
@@ -392,6 +393,7 @@
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Bullet2.h" />
     <ClInclude Include="Bullet3.h" />
+    <ClInclude Include="eBullet.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="entity.h" />
     <ClInclude Include="Hero.h" />

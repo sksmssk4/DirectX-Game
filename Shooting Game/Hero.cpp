@@ -50,14 +50,19 @@ void Hero::move(int i)
 		x_pos += 7.0f;
 		hit_Move = true;
 		break;
-
 	}
+	if (x_pos < 0)
+		x_pos = 0;
+	if (y_pos < 0)
+		y_pos = 0;
+	if (y_pos > 380)
+		y_pos = 380;
 }
 bool Hero::check_collision(float x, float y)
 {
 
-	//面倒 贸府 矫 
-	if (sphere_collision_check(x_pos, y_pos, 32.0f, x, y, 32.0f) == true)
+	//面倒 贸府 矫                             y   
+	if (sphere_collision_check(x_pos, y_pos, 20.0f, x, y, 20.0f) == true)
 	{
 		hit_Show = true;
 		return true;

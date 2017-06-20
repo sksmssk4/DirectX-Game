@@ -13,6 +13,7 @@
 #include "Bullet.h"
 #include "Bullet2.h"
 #include "Bullet3.h"
+#include "eBullet.h"
 
 #include <mmsystem.h>
 #include <Digitalv.h>
@@ -26,6 +27,7 @@
 
 #define ENEMY_NUM 10 
 #define BULLET_NUM 10
+#define BULLET_NUM2 5
 #define BG_NUM 10
 // include the Direct3D Library file
 #pragma comment (lib, "d3d9.lib")
@@ -69,11 +71,15 @@ LPDIRECT3DTEXTURE9 sprite_hero_skill5;
 LPDIRECT3DTEXTURE9 sprite_hero_skill6;
 LPDIRECT3DTEXTURE9 sprite_hero_skill7;
 LPDIRECT3DTEXTURE9 sprite_hero_skill8;
-
-LPDIRECT3DTEXTURE9 sprite_enemy;   
-LPDIRECT3DTEXTURE9 sprite_bullet;  
+//주인공 총알
+LPDIRECT3DTEXTURE9 sprite_bullet;
 LPDIRECT3DTEXTURE9 sprite_bullet2;
 LPDIRECT3DTEXTURE9 sprite_bullet3;
+//적 대기
+LPDIRECT3DTEXTURE9 sprite_enemy;
+//적 총알
+LPDIRECT3DTEXTURE9 sprite_enemy_bullet;
+
 
 //음악파일 재생(ui)
 MCI_OPEN_PARMS mci_open;
@@ -112,10 +118,12 @@ enum { MOVE_UP, MOVE_DOWN, MOVE_LEFT, MOVE_RIGHT };
 
 //객체 생성 
 Hero hero;
-Enemy enemy[ENEMY_NUM];
 Bullet bullet[BULLET_NUM];
 Bullet2 bullet2[BULLET_NUM];
 Bullet3 bullet3[BULLET_NUM];
+Enemy enemy[ENEMY_NUM];
+eBullet ebullet[ENEMY_NUM];
+
 Score score;
 Bg bg[BG_NUM];
 
@@ -257,8 +265,8 @@ void initD3D(HWND hWnd)
 
 	D3DXCreateTextureFromFileEx(d3ddev,
 		L"Title.png",
-		D3DX_DEFAULT,
-		D3DX_DEFAULT,
+		500,
+		124,
 		D3DX_DEFAULT,
 		NULL,
 		D3DFMT_A8R8G8B8,
@@ -512,7 +520,7 @@ void initD3D(HWND hWnd)
 		NULL,    // no image info struct
 		NULL,    // not using 256 colors
 		&sprite_hero_hit);    // load to sprite
-
+	//적
 	D3DXCreateTextureFromFileEx(d3ddev,    // the device pointer
 		L"enemy.png",    // the file name
 		D3DX_DEFAULT,    // default width
@@ -527,7 +535,21 @@ void initD3D(HWND hWnd)
 		NULL,    // no image info struct
 		NULL,    // not using 256 colors
 		&sprite_enemy);    // load to sprite
-
+	//적 총알
+	D3DXCreateTextureFromFileEx(d3ddev,    // the device pointer
+		L"ebullet.png",    // the file name
+		30,    // default width
+		29,    // default height
+		D3DX_DEFAULT,    // no mip mapping
+		NULL,    // regular usage
+		D3DFMT_A8R8G8B8,    // 32-bit pixels with alpha
+		D3DPOOL_MANAGED,    // typical memory handling
+		D3DX_DEFAULT,    // no filtering
+		D3DX_DEFAULT,    // no mip filtering
+		D3DCOLOR_XRGB(255, 0, 255),    // the hot-pink color key
+		NULL,    // no image info struct
+		NULL,    // not using 256 colors
+		&sprite_enemy_bullet);    // load to sprite
 
 	D3DXCreateTextureFromFileEx(d3ddev,    // the device pointer
 		L"bullet.png",    // the file name
@@ -585,9 +607,16 @@ void init_game(void)
 	
 	bg[0].init(0.0f, 0.0f);
 	bg[1].init(SCREEN_WIDTH, 0.0f);
-	
-	hero.init(150.0f, 300.0f);
 	score.init(400.0f, 30.0f);
+	hero.init(150.0f, 300.0f);
+	//총알 초기화 
+	for (int i = 0; i < BULLET_NUM; i++)
+	{
+		bullet[i].init(hero.x_pos, hero.y_pos);
+		bullet2[i].init(hero.x_pos, hero.y_pos);
+		bullet3[i].init(hero.x_pos, hero.y_pos);
+	}
+	
 	//적들 초기화 
 	float distance = 60;
 	for (int i = 0; i < ENEMY_NUM; i++)
@@ -597,14 +626,12 @@ void init_game(void)
 		//}
 		//enemy[i].init((float)(SCREEN_WIDTH + (rand() % 300)), rand() % SCREEN_HEIGHT);
 	}
-
-	//총알 초기화 
-	for (int i = 0; i < BULLET_NUM; i++)
+	//적 총알 초기화
+	for (int i = 0; i < ENEMY_NUM; i++)
 	{
-		bullet[i].init(hero.x_pos, hero.y_pos);
-		bullet2[i].init(hero.x_pos, hero.y_pos);
-		bullet3[i].init(hero.x_pos, hero.y_pos);
+		ebullet[i].init(enemy[i].x_pos, enemy[i].y_pos);
 	}
+
 }
 
 
@@ -643,6 +670,11 @@ void do_game_logic(void)
 					hero.active();
 					hero.hit_init(hero.x_pos, (hero.y_pos) - 5);
 				}
+				if (hero.check_collision(ebullet[i].x_pos, ebullet[i].y_pos) == true)
+				{
+					hero.active();
+					hero.hit_init(hero.x_pos, (hero.y_pos) - 5);
+				}
 			}
 		}
 		//총알 보일 시 주인공 히트상태 해제
@@ -657,32 +689,6 @@ void do_game_logic(void)
 				}
 			}
 		}
-
-		float distance = 60;
-		//적들 처리 
-		for (int i = 0; i < ENEMY_NUM; i++)
-		{
-			if (enemy[i].x_pos < 0)
-			{
-				enemy[i].init((float)SCREEN_WIDTH + distance, distance);
-				distance += distance;
-			}
-			else
-				enemy[i].move();
-		}
-
-		if (KEY_DOWN(VK_CONTROL)) //넉백스킬(신라천정)
-		{
-			sndPlaySoundA("C:\\Users\\Administrator.MSDN-SPECIAL\\Desktop\\Matrices49860489\\Skill.wav", SND_ASYNC | SND_NODEFAULT | SND_ASYNC);
-			for (int i = 0; i < ENEMY_NUM; i++)
-			{
-				if (enemy[i].x_pos < 400)
-				{
-					enemy[i].init(enemy[i].x_pos+600, enemy[i].y_pos);
-				}
-			}
-		}
-
 		//총알 처리 
 		static int BCounter = 0;
 		if (KEY_DOWN(VK_SPACE)) //매직미사일 발사
@@ -717,8 +723,8 @@ void do_game_logic(void)
 				else
 					bullet[j].move();
 
-				
-				
+
+
 				for (int i = 0; i < ENEMY_NUM; i++)
 				{
 					if (bullet[j].check_collision(enemy[i].x_pos, enemy[i].y_pos) == true)
@@ -745,7 +751,7 @@ void do_game_logic(void)
 							score.score3_show = false;
 							score.score4_show = true;
 						}
-						if (hit_counter == 5) 
+						if (hit_counter == 5)
 						{
 							score.score4_show = false;
 							score.score5_show = true;
@@ -763,7 +769,7 @@ void do_game_logic(void)
 				else
 					bullet2[j].move();
 
-				
+
 				for (int i = 0; i < ENEMY_NUM; i++)
 				{
 					if (bullet2[j].check_collision(enemy[i].x_pos, enemy[i].y_pos) == true)
@@ -790,7 +796,7 @@ void do_game_logic(void)
 							score.score3_show = false;
 							score.score4_show = true;
 						}
-						if (hit_counter == 5) 
+						if (hit_counter == 5)
 						{
 							score.score4_show = false;
 							score.score5_show = true;
@@ -844,6 +850,60 @@ void do_game_logic(void)
 				}
 			}
 		}
+
+		float distance = 60;
+		//적들 처리 
+		for (int i = 0; i < ENEMY_NUM; i++)
+		{
+			if (enemy[i].x_pos < 0)
+			{
+				enemy[i].init((float)SCREEN_WIDTH + distance, distance);
+				distance += distance;
+			}
+			else
+				enemy[i].move();
+		}
+		//적 총알 처리
+		for (int i = 0; i < ENEMY_NUM; i++)
+		{
+			if (ebullet[i].show() == false)
+			{
+				ebullet[i].active();
+				ebullet[i].init(enemy[i].x_pos, enemy[i].y_pos);
+				
+			}
+		}
+		for (int i = 0; i < ENEMY_NUM; i++)
+		{
+			if (ebullet[i].show() == true)
+			{
+				if (ebullet[i].x_pos < -64)
+				{
+					ebullet[i].hide();
+					ebullet[i].move();
+				}
+				else
+					ebullet[i].move();
+				if (ebullet[i].check_collision(hero.x_pos, hero.y_pos) == true)
+				{
+					hero.active();
+					hero.hit_init(hero.x_pos, (hero.y_pos) - 5);
+				}
+			}
+		}
+		if (KEY_DOWN(VK_CONTROL)) //넉백스킬(신라천정)
+		{
+			sndPlaySoundA("C:\\Users\\Administrator.MSDN-SPECIAL\\Desktop\\Matrices49860489\\Skill.wav", SND_ASYNC | SND_NODEFAULT | SND_ASYNC);
+			for (int i = 0; i < ENEMY_NUM; i++)
+			{
+				if (enemy[i].x_pos < 600)
+				{
+					enemy[i].init(enemy[i].x_pos + 600, enemy[i].y_pos);
+					ebullet[i].init(ebullet[i].x_pos + 600, ebullet[i].y_pos);
+				}
+			}
+		}
+
 	}
 }
 
@@ -1086,7 +1146,18 @@ void render_frame(void)
 			D3DXVECTOR3 position2(enemy[i].x_pos, enemy[i].y_pos, 0.0f);    // position at 50, 50 with no depth
 			d3dspt->Draw(sprite_enemy, &part2, &center2, &position2, D3DCOLOR_ARGB(255, 255, 255, 255));
 		}
-	
+		//적총알
+		RECT part3;
+		SetRect(&part3, 0, 0, 30, 29);
+		D3DXVECTOR3 center3(0.0f, 0.0f, 0.0f);    // center at the upper-left corner
+		for (int i = 0; i < ENEMY_NUM; i++)
+		{
+			D3DXVECTOR3 position3(ebullet[i].x_pos, ebullet[i].y_pos, 0.0f);    // position at 50, 50 with no depth
+			if (ebullet[i].bShow == true)
+			{
+				d3dspt->Draw(sprite_enemy_bullet, &part3, &center3, &position3, D3DCOLOR_ARGB(255, 255, 255, 255));
+			}
+		}
 
 
 		d3dspt->End();    // end sprite drawing
@@ -1120,11 +1191,12 @@ void cleanD3D(void)
 	sprite_hero4->Release();
 	sprite_hero_hit->Release();
 	sprite_hero_skill->Release();
-
-	sprite_enemy->Release();
 	sprite_bullet->Release();
 	sprite_bullet2->Release();
 	sprite_bullet3->Release();
+
+	sprite_enemy->Release();
+	sprite_enemy_bullet->Release();
 
 	return;
 }
