@@ -385,6 +385,8 @@
     <ClCompile Include="Hero.cpp" />
     <ClCompile Include="Matrices49860489.cpp" />
     <ClCompile Include="Score.cpp" />
+    <ClCompile Include="Score2.cpp" />
+    <ClCompile Include="Score3.cpp" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>
@@ -399,6 +401,8 @@
     <ClInclude Include="Hero.h" />
     <CLInclude Include="resource.h" />
     <ClInclude Include="Score.h" />
+    <ClInclude Include="Score2.h" />
+    <ClInclude Include="Score3.h" />
     <ResourceCompile Include="Matrices49860489.rc" />
   </ItemGroup>
   <ItemGroup>

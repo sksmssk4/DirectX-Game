@@ -8,6 +8,9 @@
 #include "entity.h" 
 #include "Bg.h"
 #include "Score.h"
+#include "Score2.h"
+#include "Score3.h"
+
 #include "Hero.h"
 #include "Enemy.h"
 #include "Bullet.h"
@@ -27,7 +30,7 @@
 
 #define ENEMY_NUM 10 
 #define BULLET_NUM 10
-#define BULLET_NUM2 5
+#define BULLET_NUM2 4
 #define BG_NUM 10
 // include the Direct3D Library file
 #pragma comment (lib, "d3d9.lib")
@@ -55,6 +58,10 @@ LPDIRECT3DTEXTURE9 sprite_score2;
 LPDIRECT3DTEXTURE9 sprite_score3;
 LPDIRECT3DTEXTURE9 sprite_score4;
 LPDIRECT3DTEXTURE9 sprite_score5;
+LPDIRECT3DTEXTURE9 sprite_score6;
+LPDIRECT3DTEXTURE9 sprite_score7;
+LPDIRECT3DTEXTURE9 sprite_score8;
+LPDIRECT3DTEXTURE9 sprite_score9;
 //주인공 대기 스프라이트
 LPDIRECT3DTEXTURE9 sprite_hero; 
 LPDIRECT3DTEXTURE9 sprite_hero2;
@@ -119,12 +126,14 @@ enum { MOVE_UP, MOVE_DOWN, MOVE_LEFT, MOVE_RIGHT };
 //객체 생성 
 Hero hero;
 Bullet bullet[BULLET_NUM];
-Bullet2 bullet2[BULLET_NUM];
-Bullet3 bullet3[BULLET_NUM];
+Bullet2 bullet2[BULLET_NUM2];
+Bullet3 bullet3[BULLET_NUM2];
 Enemy enemy[ENEMY_NUM];
 eBullet ebullet[ENEMY_NUM];
 
 Score score;
+Score score2;
+Score score3;
 Bg bg[BG_NUM];
 
 
@@ -342,8 +351,8 @@ void initD3D(HWND hWnd)
 	//////////////////////////////////////////////////////////////////////////////
 	D3DXCreateTextureFromFileEx(d3ddev,
 		L"score0.png",
-		D3DX_DEFAULT,
-		D3DX_DEFAULT,
+		25,
+		40,
 		D3DX_DEFAULT,
 		NULL,
 		D3DFMT_A8R8G8B8,
@@ -357,8 +366,8 @@ void initD3D(HWND hWnd)
 
 	D3DXCreateTextureFromFileEx(d3ddev,
 		L"score1.png",
-		D3DX_DEFAULT,
-		D3DX_DEFAULT,
+		25,
+		40,
 		D3DX_DEFAULT,
 		NULL,
 		D3DFMT_A8R8G8B8,
@@ -372,8 +381,8 @@ void initD3D(HWND hWnd)
 
 	D3DXCreateTextureFromFileEx(d3ddev,
 		L"score2.png",
-		D3DX_DEFAULT,
-		D3DX_DEFAULT,
+		25,
+		40,
 		D3DX_DEFAULT,
 		NULL,
 		D3DFMT_A8R8G8B8,
@@ -387,8 +396,8 @@ void initD3D(HWND hWnd)
 
 	D3DXCreateTextureFromFileEx(d3ddev,
 		L"score3.png",
-		D3DX_DEFAULT,
-		D3DX_DEFAULT,
+		25,
+		40,
 		D3DX_DEFAULT,
 		NULL,
 		D3DFMT_A8R8G8B8,
@@ -402,8 +411,8 @@ void initD3D(HWND hWnd)
 
 	D3DXCreateTextureFromFileEx(d3ddev,
 		L"score4.png",
-		D3DX_DEFAULT,
-		D3DX_DEFAULT,
+		25,
+		40,
 		D3DX_DEFAULT,
 		NULL,
 		D3DFMT_A8R8G8B8,
@@ -417,8 +426,8 @@ void initD3D(HWND hWnd)
 
 	D3DXCreateTextureFromFileEx(d3ddev,
 		L"score5.png",
-		D3DX_DEFAULT,
-		D3DX_DEFAULT,
+		25,
+		40,
 		D3DX_DEFAULT,
 		NULL,
 		D3DFMT_A8R8G8B8,
@@ -429,6 +438,66 @@ void initD3D(HWND hWnd)
 		NULL,
 		NULL,
 		&sprite_score5);
+
+	D3DXCreateTextureFromFileEx(d3ddev,
+		L"score6.png",
+		25,
+		40,
+		D3DX_DEFAULT,
+		NULL,
+		D3DFMT_A8R8G8B8,
+		D3DPOOL_MANAGED,
+		D3DX_DEFAULT,
+		D3DX_DEFAULT,
+		D3DCOLOR_XRGB(255, 0, 255),
+		NULL,
+		NULL,
+		&sprite_score6);
+
+	D3DXCreateTextureFromFileEx(d3ddev,
+		L"score7.png",
+		25,
+		40,
+		D3DX_DEFAULT,
+		NULL,
+		D3DFMT_A8R8G8B8,
+		D3DPOOL_MANAGED,
+		D3DX_DEFAULT,
+		D3DX_DEFAULT,
+		D3DCOLOR_XRGB(255, 0, 255),
+		NULL,
+		NULL,
+		&sprite_score7);
+
+	D3DXCreateTextureFromFileEx(d3ddev,
+		L"score8.png",
+		25,
+		40,
+		D3DX_DEFAULT,
+		NULL,
+		D3DFMT_A8R8G8B8,
+		D3DPOOL_MANAGED,
+		D3DX_DEFAULT,
+		D3DX_DEFAULT,
+		D3DCOLOR_XRGB(255, 0, 255),
+		NULL,
+		NULL,
+		&sprite_score8);
+
+	D3DXCreateTextureFromFileEx(d3ddev,
+		L"score9.png",
+		25,
+		40,
+		D3DX_DEFAULT,
+		NULL,
+		D3DFMT_A8R8G8B8,
+		D3DPOOL_MANAGED,
+		D3DX_DEFAULT,
+		D3DX_DEFAULT,
+		D3DCOLOR_XRGB(255, 0, 255),
+		NULL,
+		NULL,
+		&sprite_score9);
 	//////////////////////////////////////////////////////////////////////
 
 	//주인공 대기 스프라이트
@@ -607,12 +676,18 @@ void init_game(void)
 	
 	bg[0].init(0.0f, 0.0f);
 	bg[1].init(SCREEN_WIDTH, 0.0f);
-	score.init(400.0f, 30.0f);
+	score.init(600.0f, 30.0f);
+	score2.init(630.0f, 30.0f);
+	score3.init(660.0f, 30.0f);
 	hero.init(150.0f, 300.0f);
 	//총알 초기화 
 	for (int i = 0; i < BULLET_NUM; i++)
 	{
 		bullet[i].init(hero.x_pos, hero.y_pos);
+
+	}
+	for (int i = 0; i < BULLET_NUM2; i++)
+	{
 		bullet2[i].init(hero.x_pos, hero.y_pos);
 		bullet3[i].init(hero.x_pos, hero.y_pos);
 	}
@@ -691,6 +766,7 @@ void do_game_logic(void)
 		}
 		//총알 처리 
 		static int BCounter = 0;
+		static int BCounter2 = 0;
 		if (KEY_DOWN(VK_SPACE)) //매직미사일 발사
 		{
 			for (int i = 0; i < BULLET_NUM; i++)
@@ -698,12 +774,23 @@ void do_game_logic(void)
 				BCounter++;
 				if (BCounter % 9 == 0)
 				{
-					if (bullet[i].show() == false && bullet2[i].show() == false && bullet3[i].show() == false)
+					if (bullet[i].show() == false)
 					{
 						bullet[i].active();
+						bullet[i].init(hero.x_pos + 20.0f, hero.y_pos);
+						break;
+					}
+				}
+			}
+			for (int i = 0; i < BULLET_NUM2; i++)
+			{
+				BCounter2++;
+				if (BCounter % 15 == 0)
+				{
+					if (bullet2[i].show() == false && bullet3[i].show() == false)
+					{
 						bullet2[i].active();
 						bullet3[i].active();
-						bullet[i].init(hero.x_pos + 20.0f, hero.y_pos);
 						bullet2[i].init(hero.x_pos + 20.0f, hero.y_pos);
 						bullet3[i].init(hero.x_pos + 20.0f, hero.y_pos);
 						break;
@@ -731,36 +818,366 @@ void do_game_logic(void)
 					{
 						hit_counter += 1; //충돌 1회할때마다 1개씩 체크됨
 						enemy[i].init((float)(SCREEN_WIDTH + (rand() % 300)), rand() % SCREEN_HEIGHT); // 적이 충돌되면 다시 랜덤으로 등장
-						if (hit_counter == 1) // 충돌 횟수 1회시
-						{
-							score.score0_show = false;
-							score.score1_show = true;
-						}
 						if (hit_counter == 2) // 충돌 횟수 2회시
 						{
-							score.score1_show = false;
-							score.score2_show = true;
+							score3.score0_show = true;
+							score.score0_show = true;
+							score2.score0_show = false;
+							score2.score1_show = true;
 						}
-						if (hit_counter == 3)
+						if (hit_counter == 4) // 충돌 횟수 4회시
 						{
+							score3.score0_show = true;
+							score.score0_show = true;
+							score2.score1_show = false;
+							score2.score2_show = true;
+						}
+						if (hit_counter == 6)
+						{
+							score3.score0_show = true;
+							score.score0_show = true;
+							score2.score2_show = false;
+							score2.score3_show = true;
+						}
+						if (hit_counter == 8)
+						{
+							score3.score0_show = true;
+							score.score0_show = true;
+							score2.score3_show = false;
+							score2.score4_show = true;
+						}
+						if (hit_counter == 10)
+						{
+							score3.score0_show = true;
+							score.score0_show = true;
+							score2.score4_show = false;
+							score2.score5_show = true;
+						}
+						if (hit_counter == 12)
+						{
+							score3.score0_show = true;
+							score.score0_show = true;
+							score2.score5_show = false;
+							score2.score6_show = true;
+						}
+						if (hit_counter == 14)
+						{
+							score3.score0_show = true;
+							score.score0_show = true;
+							score2.score6_show = false;
+							score2.score7_show = true;
+						}
+						if (hit_counter == 16)
+						{
+							score3.score0_show = true;
+							score.score0_show = true;
+							score2.score7_show = false;
+							score2.score8_show = true;
+						}
+						if (hit_counter == 18)
+						{
+							score3.score0_show = true;
+							score.score0_show = true;
+							score2.score8_show = false;
+							score2.score9_show = true;
+						}
+						if (hit_counter == 20)
+						{
+							score3.score0_show = true;
+							score.score0_show = false;
+							score.score1_show = true;
+							score2.score9_show = false;
+							score2.score0_show = true;
+						}
+						if (hit_counter == 22)
+						{
+							score3.score0_show = true;
+							score.score1_show = true;
+							score2.score0_show = false;
+							score2.score1_show = true;
+						}
+						if (hit_counter == 24)
+						{
+							score3.score0_show = true;
+							score.score1_show = true;
+							score2.score1_show = false;
+							score2.score2_show = true;
+						}
+						if (hit_counter == 26)
+						{
+							score3.score0_show = true;
+							score.score1_show = true;
+							score2.score2_show = false;
+							score2.score3_show = true;
+						}
+						if (hit_counter == 28)
+						{
+							score3.score0_show = true;
+							score.score1_show = true;
+							score2.score3_show = false;
+							score2.score4_show = true;
+						}
+						if (hit_counter == 30)
+						{
+							score3.score0_show = true;
+							score.score1_show = true;
+							score2.score4_show = false;
+							score2.score5_show = true;
+						}
+						if (hit_counter == 32)
+						{
+							score3.score0_show = true;
+							score.score1_show = true;
+							score2.score5_show = false;
+							score2.score6_show = true;
+						}
+						if (hit_counter == 34)
+						{
+							score3.score0_show = true;
+							score.score1_show = true;
+							score2.score6_show = false;
+							score2.score7_show = true;
+						}
+						if (hit_counter == 36)
+						{
+							score3.score0_show = true;
+							score.score1_show = true;
+							score2.score7_show = false;
+							score2.score8_show = true;
+						}
+						if (hit_counter == 38)
+						{
+							score3.score0_show = true;
+							score.score1_show = true;
+							score2.score8_show = false;
+							score2.score9_show = true;
+						}
+						if (hit_counter == 40)
+						{
+							score3.score0_show = true;
+							score.score2_show = true;
+							score.score1_show = false;
+							score2.score9_show = false;
+							score2.score0_show = true;
+						}
+						if (hit_counter == 42)
+						{
+							score3.score0_show = true;
+							score.score2_show = true;
+							score2.score0_show = false;
+							score2.score1_show = true;
+						}
+						if (hit_counter == 44)
+						{
+							score3.score0_show = true;
+							score.score2_show = true;
+							score2.score1_show = false;
+							score2.score2_show = true;
+						}
+						if (hit_counter == 46)
+						{
+							score3.score0_show = true;
+							score.score2_show = true;
+							score2.score2_show = false;
+							score2.score3_show = true;
+						}
+						if (hit_counter == 48)
+						{
+							score3.score0_show = true;
+							score.score2_show = true;
+							score2.score3_show = false;
+							score2.score4_show = true;
+						}
+						if (hit_counter == 50)
+						{
+							score3.score0_show = true;
+							score.score2_show = true;
+							score2.score4_show = false;
+							score2.score5_show = true;
+						}
+						if (hit_counter == 52)
+						{
+							score3.score0_show = true;
+							score.score2_show = true;
+							score2.score5_show = false;
+							score2.score6_show = true;
+						}
+						if (hit_counter == 54)
+						{
+							score3.score0_show = true;
+							score.score2_show = true;
+							score2.score6_show = false;
+							score2.score7_show = true;
+						}
+						if (hit_counter == 56)
+						{
+							score3.score0_show = true;
+							score.score2_show = true;
+							score2.score7_show = false;
+							score2.score8_show = true;
+						}
+						if (hit_counter == 58)
+						{
+							score3.score0_show = true;
+							score.score2_show = true;
+							score2.score8_show = false;
+							score2.score9_show = true;
+						}
+						if (hit_counter == 60)
+						{
+							score3.score0_show = true;
 							score.score2_show = false;
 							score.score3_show = true;
+							score2.score9_show = false;
+							score2.score0_show = true;
 						}
-						if (hit_counter == 4)
+						if (hit_counter == 62)
 						{
+							score3.score0_show = true;
+							score.score3_show = true;
+							score2.score0_show = false;
+							score2.score1_show = true;
+						}
+						if (hit_counter == 64)
+						{
+							score3.score0_show = true;
+							score.score3_show = true;
+							score2.score1_show = false;
+							score2.score2_show = true;
+						}
+						if (hit_counter == 66)
+						{
+							score3.score0_show = true;
+							score.score3_show = true;
+							score2.score2_show = false;
+							score2.score3_show = true;
+						}
+						if (hit_counter == 68)
+						{
+							score3.score0_show = true;
+							score.score3_show = true;
+							score2.score3_show = false;
+							score2.score4_show = true;
+						}
+						if (hit_counter == 70)
+						{
+							score3.score0_show = true;
+							score.score3_show = true;
+							score2.score4_show = false;
+							score2.score5_show = true;
+						}
+						if (hit_counter == 72)
+						{
+							score3.score0_show = true;
+							score.score3_show = true;
+							score2.score5_show = false;
+							score2.score6_show = true;
+						}
+						if (hit_counter == 74)
+						{
+							score3.score0_show = true;
+							score.score3_show = true;
+							score2.score6_show = false;
+							score2.score7_show = true;
+						}
+						if (hit_counter == 76)
+						{
+							score3.score0_show = true;
+							score.score3_show = true;
+							score2.score7_show = false;
+							score2.score8_show = true;
+						}
+						if (hit_counter == 78)
+						{
+							score3.score0_show = true;
+							score.score3_show = true;
+							score2.score8_show = false;
+							score2.score9_show = true;
+						}
+						if (hit_counter == 80)
+						{
+							score3.score0_show = true;
 							score.score3_show = false;
 							score.score4_show = true;
+							score2.score9_show = false;
+							score2.score0_show = true;
 						}
-						if (hit_counter == 5)
+						if (hit_counter == 82)
 						{
+							score3.score0_show = true;
+							score.score4_show = true;
+							score2.score0_show = false;
+							score2.score1_show = true;
+						}
+						if (hit_counter == 84)
+						{
+							score3.score0_show = true;
+							score.score4_show = true;
+							score2.score1_show = false;
+							score2.score2_show = true;
+						}
+						if (hit_counter == 86)
+						{
+							score3.score0_show = true;
+							score.score4_show = true;
+							score2.score2_show = false;
+							score2.score3_show = true;
+						}
+						if (hit_counter == 88)
+						{
+							score3.score0_show = true;
+							score.score4_show = true;
+							score2.score3_show = false;
+							score2.score4_show = true;
+						}
+						if (hit_counter == 90)
+						{
+							score3.score0_show = true;
+							score.score4_show = true;
+							score2.score4_show = false;
+							score2.score5_show = true;
+						}
+						if (hit_counter == 92)
+						{
+							score3.score0_show = true;
+							score.score4_show = true;
+							score2.score5_show = false;
+							score2.score6_show = true;
+						}
+						if (hit_counter == 94)
+						{
+							score3.score0_show = true;
+							score.score4_show = true;
+							score2.score6_show = false;
+							score2.score7_show = true;
+						}
+						if (hit_counter == 96)
+						{
+							score3.score0_show = true;
+							score.score4_show = true;
+							score2.score7_show = false;
+							score2.score8_show = true;
+						}
+						if (hit_counter == 98)
+						{
+							score3.score0_show = true;
+							score.score4_show = true;
+							score2.score8_show = false;
+							score2.score9_show = true;
+						}
+						if (hit_counter == 100)
+						{
+							score3.score0_show = true;
 							score.score4_show = false;
 							score.score5_show = true;
+							score2.score9_show = false;
+							score2.score0_show = true;
 						}
 					}
 				}
 			}
 		}
-		for (int j = 0; j < BULLET_NUM; j++)
+		for (int j = 0; j < BULLET_NUM2; j++)
 		{
 			if (bullet2[j].show() == true)
 			{
@@ -776,36 +1193,366 @@ void do_game_logic(void)
 					{
 						hit_counter += 1;
 						enemy[i].init((float)(SCREEN_WIDTH + (rand() % 300)), rand() % SCREEN_HEIGHT);
-						if (hit_counter == 1) // 충돌 횟수 1회시
-						{
-							score.score0_show = false;
-							score.score1_show = true;
-						}
 						if (hit_counter == 2) // 충돌 횟수 2회시
 						{
-							score.score1_show = false;
-							score.score2_show = true;
+							score3.score0_show = true;
+							score.score0_show = true;
+							score2.score0_show = false;
+							score2.score1_show = true;
 						}
-						if (hit_counter == 3)
+						if (hit_counter == 4) // 충돌 횟수 4회시
 						{
+							score3.score0_show = true;
+							score.score0_show = true;
+							score2.score1_show = false;
+							score2.score2_show = true;
+						}
+						if (hit_counter == 6)
+						{
+							score3.score0_show = true;
+							score.score0_show = true;
+							score2.score2_show = false;
+							score2.score3_show = true;
+						}
+						if (hit_counter == 8)
+						{
+							score3.score0_show = true;
+							score.score0_show = true;
+							score2.score3_show = false;
+							score2.score4_show = true;
+						}
+						if (hit_counter == 10)
+						{
+							score3.score0_show = true;
+							score.score0_show = true;
+							score2.score4_show = false;
+							score2.score5_show = true;
+						}
+						if (hit_counter == 12)
+						{
+							score3.score0_show = true;
+							score.score0_show = true;
+							score2.score5_show = false;
+							score2.score6_show = true;
+						}
+						if (hit_counter == 14)
+						{
+							score3.score0_show = true;
+							score.score0_show = true;
+							score2.score6_show = false;
+							score2.score7_show = true;
+						}
+						if (hit_counter == 16)
+						{
+							score3.score0_show = true;
+							score.score0_show = true;
+							score2.score7_show = false;
+							score2.score8_show = true;
+						}
+						if (hit_counter == 18)
+						{
+							score3.score0_show = true;
+							score.score0_show = true;
+							score2.score8_show = false;
+							score2.score9_show = true;
+						}
+						if (hit_counter == 20)
+						{
+							score3.score0_show = true;
+							score.score0_show = false;
+							score.score1_show = true;
+							score2.score9_show = false;
+							score2.score0_show = true;
+						}
+						if (hit_counter == 22)
+						{
+							score3.score0_show = true;
+							score.score1_show = true;
+							score2.score0_show = false;
+							score2.score1_show = true;
+						}
+						if (hit_counter == 24)
+						{
+							score3.score0_show = true;
+							score.score1_show = true;
+							score2.score1_show = false;
+							score2.score2_show = true;
+						}
+						if (hit_counter == 26)
+						{
+							score3.score0_show = true;
+							score.score1_show = true;
+							score2.score2_show = false;
+							score2.score3_show = true;
+						}
+						if (hit_counter == 28)
+						{
+							score3.score0_show = true;
+							score.score1_show = true;
+							score2.score3_show = false;
+							score2.score4_show = true;
+						}
+						if (hit_counter == 30)
+						{
+							score3.score0_show = true;
+							score.score1_show = true;
+							score2.score4_show = false;
+							score2.score5_show = true;
+						}
+						if (hit_counter == 32)
+						{
+							score3.score0_show = true;
+							score.score1_show = true;
+							score2.score5_show = false;
+							score2.score6_show = true;
+						}
+						if (hit_counter == 34)
+						{
+							score3.score0_show = true;
+							score.score1_show = true;
+							score2.score6_show = false;
+							score2.score7_show = true;
+						}
+						if (hit_counter == 36)
+						{
+							score3.score0_show = true;
+							score.score1_show = true;
+							score2.score7_show = false;
+							score2.score8_show = true;
+						}
+						if (hit_counter == 38)
+						{
+							score3.score0_show = true;
+							score.score1_show = true;
+							score2.score8_show = false;
+							score2.score9_show = true;
+						}
+						if (hit_counter == 40)
+						{
+							score3.score0_show = true;
+							score.score2_show = true;
+							score.score1_show = false;
+							score2.score9_show = false;
+							score2.score0_show = true;
+						}
+						if (hit_counter == 42)
+						{
+							score3.score0_show = true;
+							score.score2_show = true;
+							score2.score0_show = false;
+							score2.score1_show = true;
+						}
+						if (hit_counter == 44)
+						{
+							score3.score0_show = true;
+							score.score2_show = true;
+							score2.score1_show = false;
+							score2.score2_show = true;
+						}
+						if (hit_counter == 46)
+						{
+							score3.score0_show = true;
+							score.score2_show = true;
+							score2.score2_show = false;
+							score2.score3_show = true;
+						}
+						if (hit_counter == 48)
+						{
+							score3.score0_show = true;
+							score.score2_show = true;
+							score2.score3_show = false;
+							score2.score4_show = true;
+						}
+						if (hit_counter == 50)
+						{
+							score3.score0_show = true;
+							score.score2_show = true;
+							score2.score4_show = false;
+							score2.score5_show = true;
+						}
+						if (hit_counter == 52)
+						{
+							score3.score0_show = true;
+							score.score2_show = true;
+							score2.score5_show = false;
+							score2.score6_show = true;
+						}
+						if (hit_counter == 54)
+						{
+							score3.score0_show = true;
+							score.score2_show = true;
+							score2.score6_show = false;
+							score2.score7_show = true;
+						}
+						if (hit_counter == 56)
+						{
+							score3.score0_show = true;
+							score.score2_show = true;
+							score2.score7_show = false;
+							score2.score8_show = true;
+						}
+						if (hit_counter == 58)
+						{
+							score3.score0_show = true;
+							score.score2_show = true;
+							score2.score8_show = false;
+							score2.score9_show = true;
+						}
+						if (hit_counter == 60)
+						{
+							score3.score0_show = true;
 							score.score2_show = false;
 							score.score3_show = true;
+							score2.score9_show = false;
+							score2.score0_show = true;
 						}
-						if (hit_counter == 4)
+						if (hit_counter == 62)
 						{
+							score3.score0_show = true;
+							score.score3_show = true;
+							score2.score0_show = false;
+							score2.score1_show = true;
+						}
+						if (hit_counter == 64)
+						{
+							score3.score0_show = true;
+							score.score3_show = true;
+							score2.score1_show = false;
+							score2.score2_show = true;
+						}
+						if (hit_counter == 66)
+						{
+							score3.score0_show = true;
+							score.score3_show = true;
+							score2.score2_show = false;
+							score2.score3_show = true;
+						}
+						if (hit_counter == 68)
+						{
+							score3.score0_show = true;
+							score.score3_show = true;
+							score2.score3_show = false;
+							score2.score4_show = true;
+						}
+						if (hit_counter == 70)
+						{
+							score3.score0_show = true;
+							score.score3_show = true;
+							score2.score4_show = false;
+							score2.score5_show = true;
+						}
+						if (hit_counter == 72)
+						{
+							score3.score0_show = true;
+							score.score3_show = true;
+							score2.score5_show = false;
+							score2.score6_show = true;
+						}
+						if (hit_counter == 74)
+						{
+							score3.score0_show = true;
+							score.score3_show = true;
+							score2.score6_show = false;
+							score2.score7_show = true;
+						}
+						if (hit_counter == 76)
+						{
+							score3.score0_show = true;
+							score.score3_show = true;
+							score2.score7_show = false;
+							score2.score8_show = true;
+						}
+						if (hit_counter == 78)
+						{
+							score3.score0_show = true;
+							score.score3_show = true;
+							score2.score8_show = false;
+							score2.score9_show = true;
+						}
+						if (hit_counter == 80)
+						{
+							score3.score0_show = true;
 							score.score3_show = false;
 							score.score4_show = true;
+							score2.score9_show = false;
+							score2.score0_show = true;
 						}
-						if (hit_counter == 5)
+						if (hit_counter == 82)
 						{
+							score3.score0_show = true;
+							score.score4_show = true;
+							score2.score0_show = false;
+							score2.score1_show = true;
+						}
+						if (hit_counter == 84)
+						{
+							score3.score0_show = true;
+							score.score4_show = true;
+							score2.score1_show = false;
+							score2.score2_show = true;
+						}
+						if (hit_counter == 86)
+						{
+							score3.score0_show = true;
+							score.score4_show = true;
+							score2.score2_show = false;
+							score2.score3_show = true;
+						}
+						if (hit_counter == 88)
+						{
+							score3.score0_show = true;
+							score.score4_show = true;
+							score2.score3_show = false;
+							score2.score4_show = true;
+						}
+						if (hit_counter == 90)
+						{
+							score3.score0_show = true;
+							score.score4_show = true;
+							score2.score4_show = false;
+							score2.score5_show = true;
+						}
+						if (hit_counter == 92)
+						{
+							score3.score0_show = true;
+							score.score4_show = true;
+							score2.score5_show = false;
+							score2.score6_show = true;
+						}
+						if (hit_counter == 94)
+						{
+							score3.score0_show = true;
+							score.score4_show = true;
+							score2.score6_show = false;
+							score2.score7_show = true;
+						}
+						if (hit_counter == 96)
+						{
+							score3.score0_show = true;
+							score.score4_show = true;
+							score2.score7_show = false;
+							score2.score8_show = true;
+						}
+						if (hit_counter == 98)
+						{
+							score3.score0_show = true;
+							score.score4_show = true;
+							score2.score8_show = false;
+							score2.score9_show = true;
+						}
+						if (hit_counter == 100)
+						{
+							score3.score0_show = true;
 							score.score4_show = false;
 							score.score5_show = true;
+							score2.score9_show = false;
+							score2.score0_show = true;
 						}
 					}
 				}
 			}
 		}
-		for (int j = 0; j < BULLET_NUM; j++)
+		for (int j = 0; j < BULLET_NUM2; j++)
 		{
 			if (bullet3[j].show() == true)
 			{
@@ -821,30 +1568,367 @@ void do_game_logic(void)
 					{
 						hit_counter += 1;
 						enemy[i].init((float)(SCREEN_WIDTH + (rand() % 300)), rand() % SCREEN_HEIGHT);
-						if (hit_counter == 1) // 충돌 횟수 1회시
+						if (hit_counter == 2) // 충돌 횟수 1회시
 						{
-							score.score0_show = false;
-							score.score1_show = true;
+							score3.score0_show = true;
+							score.score0_show = true;
+							score2.score0_show = false;
+							score2.score1_show = true;
 						}
 						if (hit_counter == 2) // 충돌 횟수 2회시
 						{
-							score.score1_show = false;
-							score.score2_show = true;
+							score3.score0_show = true;
+							score.score0_show = true;
+							score2.score0_show = false;
+							score2.score1_show = true;
 						}
-						if (hit_counter == 3)
+						if (hit_counter == 4) // 충돌 횟수 4회시
 						{
+							score3.score0_show = true;
+							score.score0_show = true;
+							score2.score1_show = false;
+							score2.score2_show = true;
+						}
+						if (hit_counter == 6)
+						{
+							score3.score0_show = true;
+							score.score0_show = true;
+							score2.score2_show = false;
+							score2.score3_show = true;
+						}
+						if (hit_counter == 8)
+						{
+							score3.score0_show = true;
+							score.score0_show = true;
+							score2.score3_show = false;
+							score2.score4_show = true;
+						}
+						if (hit_counter == 10)
+						{
+							score3.score0_show = true;
+							score.score0_show = true;
+							score2.score4_show = false;
+							score2.score5_show = true;
+						}
+						if (hit_counter == 12)
+						{
+							score3.score0_show = true;
+							score.score0_show = true;
+							score2.score5_show = false;
+							score2.score6_show = true;
+						}
+						if (hit_counter == 14)
+						{
+							score3.score0_show = true;
+							score.score0_show = true;
+							score2.score6_show = false;
+							score2.score7_show = true;
+						}
+						if (hit_counter == 16)
+						{
+							score3.score0_show = true;
+							score.score0_show = true;
+							score2.score7_show = false;
+							score2.score8_show = true;
+						}
+						if (hit_counter == 18)
+						{
+							score3.score0_show = true;
+							score.score0_show = true;
+							score2.score8_show = false;
+							score2.score9_show = true;
+						}
+						if (hit_counter == 20)
+						{
+							score3.score0_show = true;
+							score.score0_show = false;
+							score.score1_show = true;
+							score2.score9_show = false;
+							score2.score0_show = true;
+						}
+						if (hit_counter == 22)
+						{
+							score3.score0_show = true;
+							score.score1_show = true;
+							score2.score0_show = false;
+							score2.score1_show = true;
+						}
+						if (hit_counter == 24)
+						{
+							score3.score0_show = true;
+							score.score1_show = true;
+							score2.score1_show = false;
+							score2.score2_show = true;
+						}
+						if (hit_counter == 26)
+						{
+							score3.score0_show = true;
+							score.score1_show = true;
+							score2.score2_show = false;
+							score2.score3_show = true;
+						}
+						if (hit_counter == 28)
+						{
+							score3.score0_show = true;
+							score.score1_show = true;
+							score2.score3_show = false;
+							score2.score4_show = true;
+						}
+						if (hit_counter == 30)
+						{
+							score3.score0_show = true;
+							score.score1_show = true;
+							score2.score4_show = false;
+							score2.score5_show = true;
+						}
+						if (hit_counter == 32)
+						{
+							score3.score0_show = true;
+							score.score1_show = true;
+							score2.score5_show = false;
+							score2.score6_show = true;
+						}
+						if (hit_counter == 34)
+						{
+							score3.score0_show = true;
+							score.score1_show = true;
+							score2.score6_show = false;
+							score2.score7_show = true;
+						}
+						if (hit_counter == 36)
+						{
+							score3.score0_show = true;
+							score.score1_show = true;
+							score2.score7_show = false;
+							score2.score8_show = true;
+						}
+						if (hit_counter == 38)
+						{
+							score3.score0_show = true;
+							score.score1_show = true;
+							score2.score8_show = false;
+							score2.score9_show = true;
+						}
+						if (hit_counter == 40)
+						{
+							score3.score0_show = true;
+							score.score2_show = true;
+							score.score1_show = false;
+							score2.score9_show = false;
+							score2.score0_show = true;
+						}
+						if (hit_counter == 42)
+						{
+							score3.score0_show = true;
+							score.score2_show = true;
+							score2.score0_show = false;
+							score2.score1_show = true;
+						}
+						if (hit_counter == 44)
+						{
+							score3.score0_show = true;
+							score.score2_show = true;
+							score2.score1_show = false;
+							score2.score2_show = true;
+						}
+						if (hit_counter == 46)
+						{
+							score3.score0_show = true;
+							score.score2_show = true;
+							score2.score2_show = false;
+							score2.score3_show = true;
+						}
+						if (hit_counter == 48)
+						{
+							score3.score0_show = true;
+							score.score2_show = true;
+							score2.score3_show = false;
+							score2.score4_show = true;
+						}
+						if (hit_counter == 50)
+						{
+							score3.score0_show = true;
+							score.score2_show = true;
+							score2.score4_show = false;
+							score2.score5_show = true;
+						}
+						if (hit_counter == 52)
+						{
+							score3.score0_show = true;
+							score.score2_show = true;
+							score2.score5_show = false;
+							score2.score6_show = true;
+						}
+						if (hit_counter == 54)
+						{
+							score3.score0_show = true;
+							score.score2_show = true;
+							score2.score6_show = false;
+							score2.score7_show = true;
+						}
+						if (hit_counter == 56)
+						{
+							score3.score0_show = true;
+							score.score2_show = true;
+							score2.score7_show = false;
+							score2.score8_show = true;
+						}
+						if (hit_counter == 58)
+						{
+							score3.score0_show = true;
+							score.score2_show = true;
+							score2.score8_show = false;
+							score2.score9_show = true;
+						}
+						if (hit_counter == 60)
+						{
+							score3.score0_show = true;
 							score.score2_show = false;
 							score.score3_show = true;
+							score2.score9_show = false;
+							score2.score0_show = true;
 						}
-						if (hit_counter == 4)
+						if (hit_counter == 62)
 						{
+							score3.score0_show = true;
+							score.score3_show = true;
+							score2.score0_show = false;
+							score2.score1_show = true;
+						}
+						if (hit_counter == 64)
+						{
+							score3.score0_show = true;
+							score.score3_show = true;
+							score2.score1_show = false;
+							score2.score2_show = true;
+						}
+						if (hit_counter == 66)
+						{
+							score3.score0_show = true;
+							score.score3_show = true;
+							score2.score2_show = false;
+							score2.score3_show = true;
+						}
+						if (hit_counter == 68)
+						{
+							score3.score0_show = true;
+							score.score3_show = true;
+							score2.score3_show = false;
+							score2.score4_show = true;
+						}
+						if (hit_counter == 70)
+						{
+							score3.score0_show = true;
+							score.score3_show = true;
+							score2.score4_show = false;
+							score2.score5_show = true;
+						}
+						if (hit_counter == 72)
+						{
+							score3.score0_show = true;
+							score.score3_show = true;
+							score2.score5_show = false;
+							score2.score6_show = true;
+						}
+						if (hit_counter == 74)
+						{
+							score3.score0_show = true;
+							score.score3_show = true;
+							score2.score6_show = false;
+							score2.score7_show = true;
+						}
+						if (hit_counter == 76)
+						{
+							score3.score0_show = true;
+							score.score3_show = true;
+							score2.score7_show = false;
+							score2.score8_show = true;
+						}
+						if (hit_counter == 78)
+						{
+							score3.score0_show = true;
+							score.score3_show = true;
+							score2.score8_show = false;
+							score2.score9_show = true;
+						}
+						if (hit_counter == 80)
+						{
+							score3.score0_show = true;
 							score.score3_show = false;
 							score.score4_show = true;
+							score2.score9_show = false;
+							score2.score0_show = true;
 						}
-						if (hit_counter == 5) // 충
+						if (hit_counter == 82)
 						{
+							score3.score0_show = true;
+							score.score4_show = true;
+							score2.score0_show = false;
+							score2.score1_show = true;
+						}
+						if (hit_counter == 84)
+						{
+							score3.score0_show = true;
+							score.score4_show = true;
+							score2.score1_show = false;
+							score2.score2_show = true;
+						}
+						if (hit_counter == 86)
+						{
+							score3.score0_show = true;
+							score.score4_show = true;
+							score2.score2_show = false;
+							score2.score3_show = true;
+						}
+						if (hit_counter == 88)
+						{
+							score3.score0_show = true;
+							score.score4_show = true;
+							score2.score3_show = false;
+							score2.score4_show = true;
+						}
+						if (hit_counter == 90)
+						{
+							score3.score0_show = true;
+							score.score4_show = true;
+							score2.score4_show = false;
+							score2.score5_show = true;
+						}
+						if (hit_counter == 92)
+						{
+							score3.score0_show = true;
+							score.score4_show = true;
+							score2.score5_show = false;
+							score2.score6_show = true;
+						}
+						if (hit_counter == 94)
+						{
+							score3.score0_show = true;
+							score.score4_show = true;
+							score2.score6_show = false;
+							score2.score7_show = true;
+						}
+						if (hit_counter == 96)
+						{
+							score3.score0_show = true;
+							score.score4_show = true;
+							score2.score7_show = false;
+							score2.score8_show = true;
+						}
+						if (hit_counter == 98)
+						{
+							score3.score0_show = true;
+							score.score4_show = true;
+							score2.score8_show = false;
+							score2.score9_show = true;
+						}
+						if (hit_counter == 100)
+						{
+							score3.score0_show = true;
 							score.score4_show = false;
 							score.score5_show = true;
+							score2.score9_show = false;
+							score2.score0_show = true;
 						}
 					}
 				}
@@ -993,60 +2077,187 @@ void render_frame(void)
 			D3DXVECTOR3 iposition(bg[i].x_pos, 0.0f, 0.0f);
 			d3dspt->Draw(sprite_inbg, &ipart, &icenter, &iposition, D3DCOLOR_ARGB(255, 255, 255, 255));
 		}
-		/////////////////////////////////////스코어//////////////////////////////////////////
+		//스코어 첫째자리
+		if (score3.score0_show == true) // score 0점을 불러온다
+		{
+			RECT Spart1;
+			SetRect(&Spart1, 0, 0, 25, 40);
+			D3DXVECTOR3 Scenter1(0.0f, 0.0f, 0.0f);
+			D3DXVECTOR3 Sposition1(score3.x_pos, score3.y_pos, 0.0f);
+			d3dspt->Draw(sprite_score0, &Spart1, &Scenter1, &Sposition1, D3DCOLOR_ARGB(255, 255, 255, 255));
+		}
+		//스코어 둘째자리
 
+		if (score2.score0_show == true ) // score 0점을 불러온다
+		{
+			RECT Spart1;
+			SetRect(&Spart1, 0, 0, 25, 40);
+			D3DXVECTOR3 Scenter1(0.0f, 0.0f, 0.0f);
+			D3DXVECTOR3 Sposition1(score2.x_pos, score2.y_pos, 0.0f);
+			d3dspt->Draw(sprite_score0, &Spart1, &Scenter1, &Sposition1, D3DCOLOR_ARGB(255, 255, 255, 255));
+		}
+
+		if (score2.score1_show == true) // score 10점을 불러온다
+		{
+			RECT Spart2;
+			SetRect(&Spart2, 0, 0, 25, 40);
+			D3DXVECTOR3 Scenter2(0.0f, 0.0f, 0.0f);
+			D3DXVECTOR3 Sposition2(score2.x_pos, score2.y_pos, 0.0f);
+			d3dspt->Draw(sprite_score1, &Spart2, &Scenter2, &Sposition2, D3DCOLOR_ARGB(255, 255, 255, 255));
+		}
+
+		if (score2.score2_show == true)// score 20점을 불러온다
+		{
+			RECT Spart3;
+			SetRect(&Spart3, 0, 0, 25, 40);
+			D3DXVECTOR3 Scenter3(0.0f, 0.0f, 0.0f);
+			D3DXVECTOR3 Sposition3(score2.x_pos, score2.y_pos, 0.0f);
+			d3dspt->Draw(sprite_score2, &Spart3, &Scenter3, &Sposition3, D3DCOLOR_ARGB(255, 255, 255, 255));
+		}
+
+		if (score2.score3_show == true)//score 30점을 불러온다
+		{
+			RECT Spart4;
+			SetRect(&Spart4, 0, 0, 25, 40);
+			D3DXVECTOR3 Scenter4(0.0f, 0.0f, 0.0f);
+			D3DXVECTOR3 Sposition4(score2.x_pos, score2.y_pos, 0.0f);
+			d3dspt->Draw(sprite_score3, &Spart4, &Scenter4, &Sposition4, D3DCOLOR_ARGB(255, 255, 255, 255));
+		}
+
+		if (score2.score4_show == true)//score 40점을 불러온다
+		{
+			RECT Spart5;
+			SetRect(&Spart5, 0, 0, 25, 40);
+			D3DXVECTOR3 Scenter5(0.0f, 0.0f, 0.0f);
+			D3DXVECTOR3 Sposition5(score2.x_pos, score2.y_pos, 0.0f);
+			d3dspt->Draw(sprite_score4, &Spart5, &Scenter5, &Sposition5, D3DCOLOR_ARGB(255, 255, 255, 255));
+		}
+
+		if (score2.score5_show == true)//score 50점을 불러온다
+		{
+			RECT Spart6;
+			SetRect(&Spart6, 0, 0, 25, 40);
+			D3DXVECTOR3 Scenter6(0.0f, 0.0f, 0.0f);
+			D3DXVECTOR3 Sposition6(score2.x_pos, score2.y_pos, 0.0f);
+			d3dspt->Draw(sprite_score5, &Spart6, &Scenter6, &Sposition6, D3DCOLOR_ARGB(255, 255, 255, 255));
+		}
+		if (score2.score6_show == true)//score 60점을 불러온다
+		{
+			RECT Spart7;
+			SetRect(&Spart7, 0, 0, 25, 40);
+			D3DXVECTOR3 Scenter7(0.0f, 0.0f, 0.0f);
+			D3DXVECTOR3 Sposition7(score2.x_pos, score2.y_pos, 0.0f);
+			d3dspt->Draw(sprite_score6, &Spart7, &Scenter7, &Sposition7, D3DCOLOR_ARGB(255, 255, 255, 255));
+		}
+		if (score2.score7_show == true)//score 70점을 불러온다
+		{
+			RECT Spart8;
+			SetRect(&Spart8, 0, 0, 25, 40);
+			D3DXVECTOR3 Scenter8(0.0f, 0.0f, 0.0f);
+			D3DXVECTOR3 Sposition8(score2.x_pos, score2.y_pos, 0.0f);
+			d3dspt->Draw(sprite_score7, &Spart8, &Scenter8, &Sposition8, D3DCOLOR_ARGB(255, 255, 255, 255));
+		}
+		if (score2.score8_show == true)//score 80점을 불러온다
+		{
+			RECT Spart9;
+			SetRect(&Spart9, 0, 0, 25, 40);
+			D3DXVECTOR3 Scenter9(0.0f, 0.0f, 0.0f);
+			D3DXVECTOR3 Sposition9(score2.x_pos, score2.y_pos, 0.0f);
+			d3dspt->Draw(sprite_score8, &Spart9, &Scenter9, &Sposition9, D3DCOLOR_ARGB(255, 255, 255, 255));
+		}
+		if (score2.score9_show == true)//score 90점을 불러온다
+		{
+			RECT Spart10;
+			SetRect(&Spart10, 0, 0, 25, 40);
+			D3DXVECTOR3 Scenter10(0.0f, 0.0f, 0.0f);
+			D3DXVECTOR3 Sposition10(score2.x_pos, score2.y_pos, 0.0f);
+			d3dspt->Draw(sprite_score9, &Spart10, &Scenter10, &Sposition10, D3DCOLOR_ARGB(255, 255, 255, 255));
+		}
+		// 스코어 셋째자리
 		if (score.score0_show == true) // score 0점을 불러온다
 		{
-			RECT Spart;
-			SetRect(&Spart, 0, 0, 176, 54);
-			D3DXVECTOR3 Scenter(0.0f, 0.0f, 0.0f);
-			D3DXVECTOR3 Sposition(score.x_pos, score.y_pos, 0.0f);
-			d3dspt->Draw(sprite_score0, &Spart, &Scenter, &Sposition, D3DCOLOR_ARGB(255, 255, 255, 255));
+			RECT Spart1;
+			SetRect(&Spart1, 0, 0, 25, 40);
+			D3DXVECTOR3 Scenter1(0.0f, 0.0f, 0.0f);
+			D3DXVECTOR3 Sposition1(score.x_pos, score.y_pos, 0.0f);
+			d3dspt->Draw(sprite_score0, &Spart1, &Scenter1, &Sposition1, D3DCOLOR_ARGB(255, 255, 255, 255));
 		}
 
-		if (score.score1_show == true) // score 1점을 불러온다
+		if (score.score1_show == true) // score 10점을 불러온다
 		{
-			RECT Spart;
-			SetRect(&Spart, 0, 0, 176, 54);
-			D3DXVECTOR3 Scenter(0.0f, 0.0f, 0.0f);
-			D3DXVECTOR3 Sposition(score.x_pos, score.y_pos, 0.0f);
-			d3dspt->Draw(sprite_score1, &Spart, &Scenter, &Sposition, D3DCOLOR_ARGB(255, 255, 255, 255));
+			RECT Spart2;
+			SetRect(&Spart2, 0, 0, 25, 40);
+			D3DXVECTOR3 Scenter2(0.0f, 0.0f, 0.0f);
+			D3DXVECTOR3 Sposition2(score.x_pos, score.y_pos, 0.0f);
+			d3dspt->Draw(sprite_score1, &Spart2, &Scenter2, &Sposition2, D3DCOLOR_ARGB(255, 255, 255, 255));
 		}
 
-		if (score.score2_show == true)
+		if (score.score2_show == true)// score 20점을 불러온다
 		{
-			RECT Spart;
-			SetRect(&Spart, 0, 0, 176, 54);
-			D3DXVECTOR3 Scenter(0.0f, 0.0f, 0.0f);
-			D3DXVECTOR3 Sposition(score.x_pos, score.y_pos, 0.0f);
-			d3dspt->Draw(sprite_score2, &Spart, &Scenter, &Sposition, D3DCOLOR_ARGB(255, 255, 255, 255));
+			RECT Spart3;
+			SetRect(&Spart3, 0, 0, 25, 40);
+			D3DXVECTOR3 Scenter3(0.0f, 0.0f, 0.0f);
+			D3DXVECTOR3 Sposition3(score.x_pos, score.y_pos, 0.0f);
+			d3dspt->Draw(sprite_score2, &Spart3, &Scenter3, &Sposition3, D3DCOLOR_ARGB(255, 255, 255, 255));
 		}
 
-		if (score.score3_show == true)
+		if (score.score3_show == true)//score 30점을 불러온다
 		{
-			RECT Spart;
-			SetRect(&Spart, 0, 0, 176, 54);
-			D3DXVECTOR3 Scenter(0.0f, 0.0f, 0.0f);
-			D3DXVECTOR3 Sposition(score.x_pos, score.y_pos, 0.0f);
-			d3dspt->Draw(sprite_score3, &Spart, &Scenter, &Sposition, D3DCOLOR_ARGB(255, 255, 255, 255));
+			RECT Spart4;
+			SetRect(&Spart4, 0, 0, 25, 40);
+			D3DXVECTOR3 Scenter4(0.0f, 0.0f, 0.0f);
+			D3DXVECTOR3 Sposition4(score.x_pos, score.y_pos, 0.0f);
+			d3dspt->Draw(sprite_score3, &Spart4, &Scenter4, &Sposition4, D3DCOLOR_ARGB(255, 255, 255, 255));
 		}
 
-		if (score.score4_show == true)
+		if (score.score4_show == true)//score 40점을 불러온다
 		{
-			RECT Spart;
-			SetRect(&Spart, 0, 0, 176, 54);
-			D3DXVECTOR3 Scenter(0.0f, 0.0f, 0.0f);
-			D3DXVECTOR3 Sposition(score.x_pos, score.y_pos, 0.0f);
-			d3dspt->Draw(sprite_score4, &Spart, &Scenter, &Sposition, D3DCOLOR_ARGB(255, 255, 255, 255));
+			RECT Spart5;
+			SetRect(&Spart5, 0, 0, 25, 40);
+			D3DXVECTOR3 Scenter5(0.0f, 0.0f, 0.0f);
+			D3DXVECTOR3 Sposition5(score.x_pos, score.y_pos, 0.0f);
+			d3dspt->Draw(sprite_score4, &Spart5, &Scenter5, &Sposition5, D3DCOLOR_ARGB(255, 255, 255, 255));
 		}
 
-		if (score.score5_show == true)
+		if (score.score5_show == true)//score 50점을 불러온다
 		{
-			RECT Spart;
-			SetRect(&Spart, 0, 0, 176, 54);
-			D3DXVECTOR3 Scenter(0.0f, 0.0f, 0.0f);
-			D3DXVECTOR3 Sposition(score.x_pos, score.y_pos, 0.0f);
-			d3dspt->Draw(sprite_score5, &Spart, &Scenter, &Sposition, D3DCOLOR_ARGB(255, 255, 255, 255));
+			RECT Spart6;
+			SetRect(&Spart6, 0, 0, 25, 40);
+			D3DXVECTOR3 Scenter6(0.0f, 0.0f, 0.0f);
+			D3DXVECTOR3 Sposition6(score.x_pos, score.y_pos, 0.0f);
+			d3dspt->Draw(sprite_score5, &Spart6, &Scenter6, &Sposition6, D3DCOLOR_ARGB(255, 255, 255, 255));
+		}
+		if (score.score6_show == true)//score 60점을 불러온다
+		{
+			RECT Spart7;
+			SetRect(&Spart7, 0, 0, 25, 40);
+			D3DXVECTOR3 Scenter7(0.0f, 0.0f, 0.0f);
+			D3DXVECTOR3 Sposition7(score.x_pos, score.y_pos, 0.0f);
+			d3dspt->Draw(sprite_score6, &Spart7, &Scenter7, &Sposition7, D3DCOLOR_ARGB(255, 255, 255, 255));
+		}
+		if (score.score7_show == true)//score 70점을 불러온다
+		{
+			RECT Spart8;
+			SetRect(&Spart8, 0, 0, 25, 40);
+			D3DXVECTOR3 Scenter8(0.0f, 0.0f, 0.0f);
+			D3DXVECTOR3 Sposition8(score.x_pos, score.y_pos, 0.0f);
+			d3dspt->Draw(sprite_score7, &Spart8, &Scenter8, &Sposition8, D3DCOLOR_ARGB(255, 255, 255, 255));
+		}
+		if (score.score8_show == true)//score 80점을 불러온다
+		{
+			RECT Spart9;
+			SetRect(&Spart9, 0, 0, 25, 40);
+			D3DXVECTOR3 Scenter9(0.0f, 0.0f, 0.0f);
+			D3DXVECTOR3 Sposition9(score.x_pos, score.y_pos, 0.0f);
+			d3dspt->Draw(sprite_score8, &Spart9, &Scenter9, &Sposition9, D3DCOLOR_ARGB(255, 255, 255, 255));
+		}
+		if (score.score9_show == true)//score 90점을 불러온다
+		{
+			RECT Spart10;
+			SetRect(&Spart10, 0, 0, 25, 40);
+			D3DXVECTOR3 Scenter10(0.0f, 0.0f, 0.0f);
+			D3DXVECTOR3 Sposition10(score.x_pos, score.y_pos, 0.0f);
+			d3dspt->Draw(sprite_score9, &Spart10, &Scenter10, &Sposition10, D3DCOLOR_ARGB(255, 255, 255, 255));
 		}
 		//주인공 대기 스프라이트
 		static int counter = 0;
@@ -1114,7 +2325,7 @@ void render_frame(void)
 				d3dspt->Draw(sprite_bullet, &part1, &center1, &position1, D3DCOLOR_ARGB(255, 255, 255, 255));
 			}
 		}
-		for (int i = 0; i < BULLET_NUM; i++)
+		for (int i = 0; i < BULLET_NUM2; i++)
 		{
 			if (bullet2[i].bShow == true)  //여기에요
 			{
@@ -1125,7 +2336,7 @@ void render_frame(void)
 				d3dspt->Draw(sprite_bullet2, &part1, &center1, &position1, D3DCOLOR_ARGB(255, 255, 255, 255));
 			}
 		}
-		for (int i = 0; i < BULLET_NUM; i++)
+		for (int i = 0; i < BULLET_NUM2; i++)
 		{
 			if (bullet3[i].bShow == true)
 			{
@@ -1185,15 +2396,15 @@ void cleanD3D(void)
 	//객체 해제 
 	sprite_inbg->Release();
 
-	sprite_hero->Release();
-	sprite_hero2->Release();
-	sprite_hero3->Release();
-	sprite_hero4->Release();
-	sprite_hero_hit->Release();
-	sprite_hero_skill->Release();
-	sprite_bullet->Release();
-	sprite_bullet2->Release();
-	sprite_bullet3->Release();
+	//sprite_hero->Release();
+	//sprite_hero2->Release();
+	//sprite_hero3->Release();
+	//sprite_hero4->Release();
+	//sprite_hero_hit->Release();
+	//sprite_hero_skill->Release();
+	//sprite_bullet->Release();
+	//sprite_bullet2->Release();
+	//sprite_bullet3->Release();
 
 	sprite_enemy->Release();
 	sprite_enemy_bullet->Release();
