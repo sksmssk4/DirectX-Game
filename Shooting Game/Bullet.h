@@ -8,7 +8,6 @@
 class Bullet :public entity {
 
 public:
-
 	bool bShow;
 	void init(float x, float y);
 	void move();

@@ -2,6 +2,11 @@
 
 
 
+Enemy::Enemy()
+{
+	HP = 2;
+}
+
 void Enemy::init(float x, float y)
 {
 
@@ -20,3 +25,4 @@ void Enemy::move()
 		y_pos = 380;
 
 }
+

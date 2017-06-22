@@ -377,6 +377,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Bg.cpp" />
+    <ClCompile Include="Boss.cpp" />
+    <ClCompile Include="Bossbullet.cpp" />
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Bullet2.cpp" />
     <ClCompile Include="Bullet3.cpp" />
@@ -392,6 +394,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bg.h" />
+    <ClInclude Include="Boss.h" />
+    <ClInclude Include="Bossbullet.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Bullet2.h" />
     <ClInclude Include="Bullet3.h" />

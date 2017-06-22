@@ -7,6 +7,7 @@
 class Hero :public entity {
 
 public:
+	Hero();
 	bool hit_Show;
 	bool hit_Move = false;
 	bool show();

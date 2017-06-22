@@ -13,10 +13,14 @@
 
 #include "Hero.h"
 #include "Enemy.h"
+#include "eBullet.h"
+
 #include "Bullet.h"
 #include "Bullet2.h"
 #include "Bullet3.h"
-#include "eBullet.h"
+
+#include "Boss.h"
+#include "Bossbullet.h"
 
 #include <mmsystem.h>
 #include <Digitalv.h>
@@ -84,9 +88,20 @@ LPDIRECT3DTEXTURE9 sprite_bullet2;
 LPDIRECT3DTEXTURE9 sprite_bullet3;
 //적 대기
 LPDIRECT3DTEXTURE9 sprite_enemy;
+//적공격
+LPDIRECT3DTEXTURE9 sprite_attack1;
+LPDIRECT3DTEXTURE9 sprite_attack2;
+LPDIRECT3DTEXTURE9 sprite_attack3;
 //적 총알
 LPDIRECT3DTEXTURE9 sprite_enemy_bullet;
-
+//보스
+LPDIRECT3DTEXTURE9 sprite_boss;
+LPDIRECT3DTEXTURE9 sprite_boss1;
+LPDIRECT3DTEXTURE9 sprite_boss2;
+LPDIRECT3DTEXTURE9 sprite_boss3;
+LPDIRECT3DTEXTURE9 sprite_boss4;
+//보스 총알
+LPDIRECT3DTEXTURE9 sprite_boss_bullet;
 
 //음악파일 재생(ui)
 MCI_OPEN_PARMS mci_open;
@@ -130,6 +145,8 @@ Bullet2 bullet2[BULLET_NUM2];
 Bullet3 bullet3[BULLET_NUM2];
 Enemy enemy[ENEMY_NUM];
 eBullet ebullet[ENEMY_NUM];
+Boss boss;
+Bossbullet bossbullet;
 
 Score score;
 Score score2;
@@ -604,6 +621,52 @@ void initD3D(HWND hWnd)
 		NULL,    // no image info struct
 		NULL,    // not using 256 colors
 		&sprite_enemy);    // load to sprite
+	//적공격
+	D3DXCreateTextureFromFileEx(d3ddev,    // the device pointer
+		L"attack1.png",    // the file name
+		60,    // default width
+		60,    // default height
+		D3DX_DEFAULT,    // no mip mapping
+		NULL,    // regular usage
+		D3DFMT_A8R8G8B8,    // 32-bit pixels with alpha
+		D3DPOOL_MANAGED,    // typical memory handling
+		D3DX_DEFAULT,    // no filtering
+		D3DX_DEFAULT,    // no mip filtering
+		D3DCOLOR_XRGB(255, 0, 255),    // the hot-pink color key
+		NULL,    // no image info struct
+		NULL,    // not using 256 colors
+		&sprite_attack1);    // load to sprite
+
+	D3DXCreateTextureFromFileEx(d3ddev,    // the device pointer
+		L"attack2.png",    // the file name
+		60,    // default width
+		60,    // default height
+		D3DX_DEFAULT,    // no mip mapping
+		NULL,    // regular usage
+		D3DFMT_A8R8G8B8,    // 32-bit pixels with alpha
+		D3DPOOL_MANAGED,    // typical memory handling
+		D3DX_DEFAULT,    // no filtering
+		D3DX_DEFAULT,    // no mip filtering
+		D3DCOLOR_XRGB(255, 0, 255),    // the hot-pink color key
+		NULL,    // no image info struct
+		NULL,    // not using 256 colors
+		&sprite_attack2);    // load to sprite
+
+	D3DXCreateTextureFromFileEx(d3ddev,    // the device pointer
+		L"attack3.png",    // the file name
+		60,    // default width
+		60,    // default height
+		D3DX_DEFAULT,    // no mip mapping
+		NULL,    // regular usage
+		D3DFMT_A8R8G8B8,    // 32-bit pixels with alpha
+		D3DPOOL_MANAGED,    // typical memory handling
+		D3DX_DEFAULT,    // no filtering
+		D3DX_DEFAULT,    // no mip filtering
+		D3DCOLOR_XRGB(255, 0, 255),    // the hot-pink color key
+		NULL,    // no image info struct
+		NULL,    // not using 256 colors
+		&sprite_attack3);    // load to sprite
+
 	//적 총알
 	D3DXCreateTextureFromFileEx(d3ddev,    // the device pointer
 		L"ebullet.png",    // the file name
@@ -619,7 +682,7 @@ void initD3D(HWND hWnd)
 		NULL,    // no image info struct
 		NULL,    // not using 256 colors
 		&sprite_enemy_bullet);    // load to sprite
-
+	//주인공 총알
 	D3DXCreateTextureFromFileEx(d3ddev,    // the device pointer
 		L"bullet.png",    // the file name
 		D3DX_DEFAULT,    // default width
@@ -664,7 +727,63 @@ void initD3D(HWND hWnd)
 		NULL,    // no image info struct
 		NULL,    // not using 256 colors
 		&sprite_bullet3);    // load to sprite
-
+	//보스 
+	D3DXCreateTextureFromFileEx(d3ddev,    // the device pointer
+		L"Boss.png",    // the file name
+		300,    // default width
+		300,    // default height
+		D3DX_DEFAULT,    // no mip mapping
+		NULL,    // regular usage
+		D3DFMT_A8R8G8B8,    // 32-bit pixels with alpha
+		D3DPOOL_MANAGED,    // typical memory handling
+		D3DX_DEFAULT,    // no filtering
+		D3DX_DEFAULT,    // no mip filtering
+		D3DCOLOR_XRGB(255, 0, 255),    // the hot-pink color key
+		NULL,    // no image info struct
+		NULL,    // not using 256 colors
+		&sprite_boss);    // load to sprite
+	D3DXCreateTextureFromFileEx(d3ddev,  
+		L"Boss2.png",    
+		300,    
+		300,    
+		D3DX_DEFAULT,   
+		NULL,    
+		D3DFMT_A8R8G8B8,    
+		D3DPOOL_MANAGED,    
+		D3DX_DEFAULT,   
+		D3DX_DEFAULT,   
+		D3DCOLOR_XRGB(255, 0, 255),    
+		NULL,    
+		NULL,    
+		&sprite_boss2);    
+	D3DXCreateTextureFromFileEx(d3ddev,
+		L"Boss3.png",
+		300,
+		300,
+		D3DX_DEFAULT,
+		NULL,
+		D3DFMT_A8R8G8B8,
+		D3DPOOL_MANAGED,
+		D3DX_DEFAULT,
+		D3DX_DEFAULT,
+		D3DCOLOR_XRGB(255, 0, 255),
+		NULL,
+		NULL,
+		&sprite_boss3);
+	D3DXCreateTextureFromFileEx(d3ddev,
+		L"Boss4.png",
+		300,
+		300,
+		D3DX_DEFAULT,
+		NULL,
+		D3DFMT_A8R8G8B8,
+		D3DPOOL_MANAGED,
+		D3DX_DEFAULT,
+		D3DX_DEFAULT,
+		D3DCOLOR_XRGB(255, 0, 255),
+		NULL,
+		NULL,
+		&sprite_boss4);
 	return;
 }
 
@@ -680,6 +799,7 @@ void init_game(void)
 	score2.init(630.0f, 30.0f);
 	score3.init(660.0f, 30.0f);
 	hero.init(150.0f, 300.0f);
+	boss.init(840.0f, 90.0f);
 	//총알 초기화 
 	for (int i = 0; i < BULLET_NUM; i++)
 	{
@@ -735,6 +855,7 @@ void do_game_logic(void)
 		if (KEY_DOWN(VK_RIGHT))
 			hero.move(MOVE_RIGHT);
 
+		static int hero_counter = 2;
 		//주인공 충돌 처리
 		if (hero.show() == false)
 		{
@@ -742,13 +863,20 @@ void do_game_logic(void)
 			{
 				if (hero.check_collision(enemy[i].x_pos, enemy[i].y_pos) == true)
 				{
+					hero_counter -= 1;
 					hero.active();
 					hero.hit_init(hero.x_pos, (hero.y_pos) - 5);
 				}
 				if (hero.check_collision(ebullet[i].x_pos, ebullet[i].y_pos) == true)
 				{
+					hero_counter -= 1;
 					hero.active();
 					hero.hit_init(hero.x_pos, (hero.y_pos) - 5);
+				}
+				if (hero_counter <= 0)
+				{
+					Scene2 = false;
+					Scene1 = true;
 				}
 			}
 		}
@@ -772,7 +900,7 @@ void do_game_logic(void)
 			for (int i = 0; i < BULLET_NUM; i++)
 			{
 				BCounter++;
-				if (BCounter % 9 == 0)
+				if (BCounter % 8 == 0)
 				{
 					if (bullet[i].show() == false)
 					{
@@ -785,7 +913,7 @@ void do_game_logic(void)
 			for (int i = 0; i < BULLET_NUM2; i++)
 			{
 				BCounter2++;
-				if (BCounter % 15 == 0)
+				if (BCounter2 % 15 == 0)
 				{
 					if (bullet2[i].show() == false && bullet3[i].show() == false)
 					{
@@ -798,14 +926,65 @@ void do_game_logic(void)
 				}
 			}
 		}
-
+		//보스등장
 		static int hit_counter = 0;
+		if (boss.boss_show == false)
+		{
+			for (int i = 0; i < ENEMY_NUM; i++)
+			{
+				//보스 등장시 적과 적총알 사라짐
+				enemy[i].init(-100, 0);
+				ebullet[i].init(-100, 0);
+			}
+			boss.init(boss.x_pos, boss.y_pos);
+			boss.move();
+			//보스 충돌 처리
+			for (int i = 0; i < BULLET_NUM; i++)
+			{
+				if (boss.check_collision(bullet[i].x_pos, bullet[i].y_pos) == true)
+				{
+					sndPlaySoundA("C:\\Users\\Administrator.MSDN-SPECIAL\\Documents\\GitHub\\DirectX-Game\\Shooting Game\\Enemy_hit.wav", SND_ASYNC | SND_NODEFAULT | SND_ASYNC);
+					boss.HP -= 1;
+					if (boss.HP <= 0)
+					{
+						Scene2 = false;
+						Scene1 = true;
+					}
+				}
+			}
+			for (int i = 0; i < BULLET_NUM2; i++)
+			{
+				if (boss.check_collision(bullet2[i].x_pos, bullet2[i].y_pos) == true)
+				{
+					sndPlaySoundA("C:\\Users\\Administrator.MSDN-SPECIAL\\Documents\\GitHub\\DirectX-Game\\Shooting Game\\Enemy_hit.wav", SND_ASYNC | SND_NODEFAULT | SND_ASYNC);
+					boss.HP -= 1;
+					if (boss.HP <= 0)
+					{
+						Scene2 = false;
+						Scene1 = true;
+					}
+				}
+			}
+			for (int i = 0; i < BULLET_NUM2; i++)
+			{
+				if (boss.check_collision(bullet3[i].x_pos, bullet3[i].y_pos) == true)
+				{
+					sndPlaySoundA("C:\\Users\\Administrator.MSDN-SPECIAL\\Documents\\GitHub\\DirectX-Game\\Shooting Game\\Enemy_hit.wav", SND_ASYNC | SND_NODEFAULT | SND_ASYNC);
+					boss.HP -= 1;
+					if (boss.HP <= 0)
+					{
+						Scene2 = false;
+						Scene1 = true;
+					}
+				}
+			}
+		}
 
 		for (int j = 0; j < BULLET_NUM; j++)
 		{
 			if (bullet[j].show() == true)
 			{
-				if (bullet[j].x_pos > SCREEN_WIDTH)
+				if (bullet[j].x_pos >= 750)
 					bullet[j].hide();
 				else
 					bullet[j].move();
@@ -816,6 +995,8 @@ void do_game_logic(void)
 				{
 					if (bullet[j].check_collision(enemy[i].x_pos, enemy[i].y_pos) == true)
 					{
+						
+						sndPlaySoundA("C:\\Users\\Administrator.MSDN-SPECIAL\\Documents\\GitHub\\DirectX-Game\\Shooting Game\\Enemy_hit.wav", SND_ASYNC | SND_NODEFAULT | SND_ASYNC);
 						hit_counter += 1; //충돌 1회할때마다 1개씩 체크됨
 						enemy[i].init((float)(SCREEN_WIDTH + (rand() % 300)), rand() % SCREEN_HEIGHT); // 적이 충돌되면 다시 랜덤으로 등장
 						if (hit_counter == 2) // 충돌 횟수 2회시
@@ -1167,6 +1348,7 @@ void do_game_logic(void)
 						}
 						if (hit_counter == 100)
 						{
+							boss.boss_show = true;
 							score3.score0_show = true;
 							score.score4_show = false;
 							score.score5_show = true;
@@ -1181,7 +1363,7 @@ void do_game_logic(void)
 		{
 			if (bullet2[j].show() == true)
 			{
-				if (bullet2[j].x_pos > SCREEN_WIDTH)
+				if (bullet2[j].x_pos >= 750)
 					bullet2[j].hide();
 				else
 					bullet2[j].move();
@@ -1191,6 +1373,8 @@ void do_game_logic(void)
 				{
 					if (bullet2[j].check_collision(enemy[i].x_pos, enemy[i].y_pos) == true)
 					{
+						
+						sndPlaySoundA("C:\\Users\\Administrator.MSDN-SPECIAL\\Documents\\GitHub\\DirectX-Game\\Shooting Game\\Enemy_hit.wav", SND_ASYNC | SND_NODEFAULT | SND_ASYNC);
 						hit_counter += 1;
 						enemy[i].init((float)(SCREEN_WIDTH + (rand() % 300)), rand() % SCREEN_HEIGHT);
 						if (hit_counter == 2) // 충돌 횟수 2회시
@@ -1542,6 +1726,7 @@ void do_game_logic(void)
 						}
 						if (hit_counter == 100)
 						{
+							boss.boss_show = true;
 							score3.score0_show = true;
 							score.score4_show = false;
 							score.score5_show = true;
@@ -1556,7 +1741,8 @@ void do_game_logic(void)
 		{
 			if (bullet3[j].show() == true)
 			{
-				if (bullet3[j].x_pos > SCREEN_WIDTH)
+				
+				if (bullet3[j].x_pos >= 750)
 					bullet3[j].hide();
 				else
 					bullet3[j].move();
@@ -1566,6 +1752,8 @@ void do_game_logic(void)
 				{
 					if (bullet3[j].check_collision(enemy[i].x_pos, enemy[i].y_pos) == true)
 					{
+						
+						sndPlaySoundA("C:\\Users\\Administrator.MSDN-SPECIAL\\Documents\\GitHub\\DirectX-Game\\Shooting Game\\Enemy_hit.wav", SND_ASYNC | SND_NODEFAULT | SND_ASYNC);
 						hit_counter += 1;
 						enemy[i].init((float)(SCREEN_WIDTH + (rand() % 300)), rand() % SCREEN_HEIGHT);
 						if (hit_counter == 2) // 충돌 횟수 1회시
@@ -1924,6 +2112,7 @@ void do_game_logic(void)
 						}
 						if (hit_counter == 100)
 						{
+							boss.boss_show = true;
 							score3.score0_show = true;
 							score.score4_show = false;
 							score.score5_show = true;
@@ -1977,7 +2166,7 @@ void do_game_logic(void)
 		}
 		if (KEY_DOWN(VK_CONTROL)) //넉백스킬(신라천정)
 		{
-			sndPlaySoundA("C:\\Users\\Administrator.MSDN-SPECIAL\\Desktop\\Matrices49860489\\Skill.wav", SND_ASYNC | SND_NODEFAULT | SND_ASYNC);
+			sndPlaySoundA("C:\\Users\\Administrator.MSDN-SPECIAL\\Documents\\GitHub\\DirectX-Game\\Shooting Game\\Skill.wav", SND_ASYNC | SND_NODEFAULT | SND_ASYNC);
 			for (int i = 0; i < ENEMY_NUM; i++)
 			{
 				if (enemy[i].x_pos < 600)
@@ -2355,7 +2544,40 @@ void render_frame(void)
 		for (int i = 0; i < ENEMY_NUM; i++)
 		{
 			D3DXVECTOR3 position2(enemy[i].x_pos, enemy[i].y_pos, 0.0f);    // position at 50, 50 with no depth
-			d3dspt->Draw(sprite_enemy, &part2, &center2, &position2, D3DCOLOR_ARGB(255, 255, 255, 255));
+			if (enemy[i].x_pos >= 700)
+				d3dspt->Draw(sprite_enemy, &part2, &center2, &position2, D3DCOLOR_ARGB(255, 255, 255, 255));
+		}
+		
+		//적 공격 애니메이션
+
+		RECT part1;
+		SetRect(&part1, 0, 0, 60, 60);
+		D3DXVECTOR3 center1(0.0f, 0.0f, 0.0f);
+
+		static int acounter = 0;
+		acounter += 1;
+		if (acounter >= 20) acounter = 0;
+		for (int i = 0; i < ENEMY_NUM; i++)
+		{
+			if (ebullet[i].bShow == true && enemy[i].x_pos < 700)
+			{
+				D3DXVECTOR3 position1(enemy[i].x_pos, enemy[i].y_pos, 0.0f);
+				switch (acounter / 5)
+				{
+				case 0:
+					d3dspt->Draw(sprite_attack1, &part1, &center1, &position1, D3DCOLOR_ARGB(255, 255, 255, 255));
+					break;
+				case 1:
+					d3dspt->Draw(sprite_attack1, &part1, &center1, &position1, D3DCOLOR_ARGB(255, 255, 255, 255));
+					break;
+				case 2 :
+					d3dspt->Draw(sprite_attack2, &part1, &center1, &position1, D3DCOLOR_ARGB(255, 255, 255, 255));
+					break;
+				case 3 :
+					d3dspt->Draw(sprite_attack3, &part1, &center1, &position1, D3DCOLOR_ARGB(255, 255, 255, 255));
+					break;
+				}
+			}
 		}
 		//적총알
 		RECT part3;
@@ -2364,12 +2586,34 @@ void render_frame(void)
 		for (int i = 0; i < ENEMY_NUM; i++)
 		{
 			D3DXVECTOR3 position3(ebullet[i].x_pos, ebullet[i].y_pos, 0.0f);    // position at 50, 50 with no depth
-			if (ebullet[i].bShow == true)
+			if (ebullet[i].bShow == true || ebullet[i].x_pos <= 0)
 			{
 				d3dspt->Draw(sprite_enemy_bullet, &part3, &center3, &position3, D3DCOLOR_ARGB(255, 255, 255, 255));
 			}
 		}
-
+		//보스 애니메이션
+		RECT part0;
+		SetRect(&part0, 0, 0, 300, 300);
+		D3DXVECTOR3 center0(0.0f, 0.0f, 0.0f);
+		D3DXVECTOR3 position0(boss.x_pos, boss.y_pos, 0.0f);
+		static int kcounter = 0;
+		kcounter += 1;
+		if (kcounter >= 20) kcounter = 0;
+		switch (kcounter / 5)
+		{
+		case 0:
+			d3dspt->Draw(sprite_boss, &part0, &center0, &position0, D3DCOLOR_ARGB(255, 255, 255, 255));
+			break;
+		case 1:
+			d3dspt->Draw(sprite_boss2, &part0, &center0, &position0, D3DCOLOR_ARGB(255, 255, 255, 255));
+			break;
+		case 2:
+			d3dspt->Draw(sprite_boss3, &part0, &center0, &position0, D3DCOLOR_ARGB(255, 255, 255, 255));
+			break;
+		case 3:
+			d3dspt->Draw(sprite_boss4, &part0, &center0, &position0, D3DCOLOR_ARGB(255, 255, 255, 255));
+			break;
+		}
 
 		d3dspt->End();    // end sprite drawing
 

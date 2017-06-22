@@ -26,6 +26,8 @@
     <ClCompile Include="eBullet.cpp" />
     <ClCompile Include="Score2.cpp" />
     <ClCompile Include="Score3.cpp" />
+    <ClCompile Include="Boss.cpp" />
+    <ClCompile Include="Bossbullet.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CLInclude Include="resource.h">
@@ -45,6 +47,8 @@
     <ClInclude Include="eBullet.h" />
     <ClInclude Include="Score2.h" />
     <ClInclude Include="Score3.h" />
+    <ClInclude Include="Boss.h" />
+    <ClInclude Include="Bossbullet.h" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>
