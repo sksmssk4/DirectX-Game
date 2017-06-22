@@ -379,6 +379,10 @@
     <ClCompile Include="Bg.cpp" />
     <ClCompile Include="Boss.cpp" />
     <ClCompile Include="Bossbullet.cpp" />
+    <ClCompile Include="Bossbullet2.cpp" />
+    <ClCompile Include="Bossbullet3.cpp" />
+    <ClCompile Include="Bossbullet4.cpp" />
+    <ClCompile Include="Bossbullet5.cpp" />
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Bullet2.cpp" />
     <ClCompile Include="Bullet3.cpp" />
@@ -396,6 +400,10 @@
     <ClInclude Include="Bg.h" />
     <ClInclude Include="Boss.h" />
     <ClInclude Include="Bossbullet.h" />
+    <ClInclude Include="Bossbullet2.h" />
+    <ClInclude Include="Bossbullet3.h" />
+    <ClInclude Include="Bossbullet4.h" />
+    <ClInclude Include="Bossbullet5.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Bullet2.h" />
     <ClInclude Include="Bullet3.h" />

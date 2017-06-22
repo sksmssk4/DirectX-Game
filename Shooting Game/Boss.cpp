@@ -5,7 +5,7 @@ bool sphere_collision_check(float x0, float y0, float size0, float x1, float y1,
 
 Boss::Boss()
 {
-	HP = 2000;
+	HP = 5000;
 }
 
 void Boss::init(float x, float y)
@@ -17,13 +17,13 @@ void Boss::init(float x, float y)
 
 void Boss::move()
 {
-	x_pos -= 2;
-	if (x_pos == 550)
-		x_pos += 2;
+	x_pos -= 4;
+	if (x_pos <= 550)
+		x_pos += 4;
 }
 bool Boss::check_collision(float x, float y)
 {
-	if(sphere_collision_check(x_pos, y_pos, 100.0f, x, y, 100.0f) == true)
+	if(sphere_collision_check(x_pos, y_pos, 32.0f, x, y, 80.0f) == true)
 	{
 		hit_Show = true;
 		return true;

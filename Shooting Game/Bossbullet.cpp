@@ -40,8 +40,14 @@ void Bossbullet::active()
 
 void Bossbullet::move()
 {
-	x_pos -= 8;
-}
+	x_pos -= 10;
+	if (x_pos < 500)
+	{
+		y_pos -= 10;
+		if (x_pos < 250)
+			y_pos += 20;
+	}
+}	
 
 void Bossbullet::hide()
 {

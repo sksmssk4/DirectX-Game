@@ -21,6 +21,10 @@
 
 #include "Boss.h"
 #include "Bossbullet.h"
+#include "Bossbullet2.h"
+#include "Bossbullet3.h"
+#include "Bossbullet4.h"
+#include "Bossbullet5.h"
 
 #include <mmsystem.h>
 #include <Digitalv.h>
@@ -32,7 +36,8 @@
 #define KEY_DOWN(vk_code) ((GetAsyncKeyState(vk_code) & 0x8000) ? 1 : 0)
 #define KEY_UP(vk_code) ((GetAsyncKeyState(vk_code) & 0x8000) ? 0 : 1)
 
-#define ENEMY_NUM 10 
+#define ENEMY_NUM 10
+#define BOSS_NUM 10
 #define BULLET_NUM 10
 #define BULLET_NUM2 4
 #define BG_NUM 10
@@ -150,7 +155,11 @@ Bullet3 bullet3[BULLET_NUM2];
 Enemy enemy[ENEMY_NUM];
 eBullet ebullet[ENEMY_NUM];
 Boss boss;
-Bossbullet bossbullet;
+Bossbullet bossbullet[BOSS_NUM];
+Bossbullet2 bossbullet2[BOSS_NUM];
+Bossbullet3 bossbullet3[BOSS_NUM];
+Bossbullet4 bossbullet4[BOSS_NUM];
+Bossbullet5 bossbullet5[BOSS_NUM];
 
 Score score;
 Score score2;
@@ -355,22 +364,6 @@ void initD3D(HWND hWnd)
 		NULL,
 		NULL,
 		&sprite_inbg);
-
-
-	D3DXCreateTextureFromFileEx(d3ddev,    // the device pointer
-		L"Panel3.png",    // the file name
-		D3DX_DEFAULT,    // default width
-		D3DX_DEFAULT,    // default height
-		D3DX_DEFAULT,    // no mip mapping
-		NULL,    // regular usage
-		D3DFMT_A8R8G8B8,    // 32-bit pixels with alpha
-		D3DPOOL_MANAGED,    // typical memory handling
-		D3DX_DEFAULT,    // no filtering
-		D3DX_DEFAULT,    // no mip filtering
-		D3DCOLOR_XRGB(255, 0, 255),    // the hot-pink color key
-		NULL,    // no image info struct
-		NULL,    // not using 256 colors
-		&sprite);    // load to sprite
 
 	//////////////////////////////////////////////////////////////////////////////
 	D3DXCreateTextureFromFileEx(d3ddev,
@@ -689,6 +682,23 @@ void initD3D(HWND hWnd)
 		NULL,    // no image info struct
 		NULL,    // not using 256 colors
 		&sprite_enemy_bullet);    // load to sprite
+
+	//보스총알
+	D3DXCreateTextureFromFileEx(d3ddev,    // the device pointer
+		L"ebullet.png",    // the file name
+		30,    // default width
+		29,    // default height
+		D3DX_DEFAULT,    // no mip mapping
+		NULL,    // regular usage
+		D3DFMT_A8R8G8B8,    // 32-bit pixels with alpha
+		D3DPOOL_MANAGED,    // typical memory handling
+		D3DX_DEFAULT,    // no filtering
+		D3DX_DEFAULT,    // no mip filtering
+		D3DCOLOR_XRGB(255, 0, 255),    // the hot-pink color key
+		NULL,    // no image info struct
+		NULL,    // not using 256 colors
+		&sprite_boss_bullet);    // load to sprite
+
 	//주인공 총알
 	D3DXCreateTextureFromFileEx(d3ddev,    // the device pointer
 		L"bullet.png",    // the file name
@@ -806,7 +816,7 @@ void init_game(void)
 	score2.init(630.0f, 30.0f);
 	score3.init(660.0f, 30.0f);
 	hero.init(150.0f, 300.0f);
-	boss.init(840.0f, 90.0f);
+	boss.init(870.0f, 90.0f);
 	//총알 초기화 
 	for (int i = 0; i < BULLET_NUM; i++)
 	{
@@ -833,6 +843,16 @@ void init_game(void)
 	{
 		ebullet[i].init(enemy[i].x_pos, enemy[i].y_pos);
 	}
+	//보스 총알 초기화
+	for (int i = 0; i < BOSS_NUM; i++)
+	{
+		bossbullet[i].init(boss.x_pos, boss.y_pos+150);
+		bossbullet2[i].init(boss.x_pos, boss.y_pos + 150);
+		bossbullet3[i].init(boss.x_pos, boss.y_pos + 150);
+		bossbullet4[i].init(boss.x_pos, boss.y_pos + 150);
+		bossbullet5[i].init(boss.x_pos, boss.y_pos + 150);
+	}
+	
 
 }
 
@@ -841,6 +861,7 @@ void do_game_logic(void)
 {
 	if (Scene2 == true)
 	{
+		Scene1 = false;   // 명현아 여기다
 
 		for (int i = 0; i < BG_NUM; i++)
 		{
@@ -862,7 +883,7 @@ void do_game_logic(void)
 		if (KEY_DOWN(VK_RIGHT))
 			hero.move(MOVE_RIGHT);
 
-		static int hero_counter = 2;
+		static int hero_counter = 300;
 		//주인공 충돌 처리
 		if (hero.show() == false)
 		{
@@ -935,6 +956,7 @@ void do_game_logic(void)
 		}
 		//보스등장
 		static int hit_counter = 0;
+		static int boss_counter = 500;
 		if (boss.boss_show == true)
 		{
 			for (int i = 0; i < ENEMY_NUM; i++)
@@ -950,8 +972,8 @@ void do_game_logic(void)
 			{
 				if (boss.check_collision(bullet[i].x_pos, bullet[i].y_pos) == true)
 				{
-					boss.HP -= 1;
-					if (boss.HP <= 0)
+					boss_counter -= 1;
+					if (boss_counter <= 0)
 					{
 						Scene2 = false;
 						Scene1 = true;
@@ -963,8 +985,8 @@ void do_game_logic(void)
 				if (boss.check_collision(bullet2[i].x_pos, bullet2[i].y_pos) == true)
 				{
 					sndPlaySoundA("C:\\Users\\Administrator.MSDN-SPECIAL\\Documents\\GitHub\\DirectX-Game\\Shooting Game\\Enemy_hit.wav", SND_ASYNC | SND_NODEFAULT | SND_ASYNC);
-					boss.HP -= 1;
-					if (boss.HP <= 0)
+					boss_counter -= 1;
+					if (boss_counter <= 0)
 					{
 						Scene2 = false;
 						Scene1 = true;
@@ -975,11 +997,130 @@ void do_game_logic(void)
 			{
 				if (boss.check_collision(bullet3[i].x_pos, bullet3[i].y_pos) == true)
 				{
-					boss.HP -= 1;
-					if (boss.HP <= 0)
+					boss_counter -= 1;
+					if (boss_counter <= 0)
 					{
 						Scene2 = false;
 						Scene1 = true;
+					}
+				}
+			}
+			static int BEcounter = 0;
+			//보스 총알 처리
+			for (int i = 0; i < BOSS_NUM; i++)
+			{
+				BEcounter++;
+				if (BEcounter % 9 == 0)
+				{
+					if (bossbullet[i].show() == false)
+					{
+						bossbullet[i].active();
+						bossbullet[i].init(boss.x_pos, boss.y_pos+150);
+						break;
+					}
+					if (bossbullet5[i].show() == false)
+					{
+						bossbullet5[i].active();
+						bossbullet5[i].init(boss.x_pos, boss.y_pos + 150);
+						break;
+					}
+				}
+			}
+			for (int i = 0; i < BOSS_NUM; i++)
+			{
+				if (bossbullet[i].show() == true)
+				{
+					if (bossbullet[i].x_pos < -64)
+					{
+						bossbullet[i].hide();
+						bossbullet[i].move();
+					}
+					else
+						bossbullet[i].move();
+					if (bossbullet[i].check_collision(hero.x_pos, hero.y_pos) == true)
+					{
+						hero.active();
+						hero.hit_init(hero.x_pos, (hero.y_pos) - 5);
+					}
+				}
+			}
+			for (int i = 0; i < BOSS_NUM; i++)
+			{
+				if (bossbullet5[i].show() == true)
+				{
+					if (bossbullet5[i].x_pos < -64)
+					{
+						bossbullet5[i].hide();
+						bossbullet5[i].move();
+					}
+					else
+						bossbullet5[i].move();
+					if (bossbullet5[i].check_collision(hero.x_pos, hero.y_pos) == true)
+					{
+						hero.active();
+						hero.hit_init(hero.x_pos, (hero.y_pos) - 5);
+					}
+				}
+			}
+			static int BEcounter2 = 0;
+			for (int i = 0; i < BOSS_NUM; i++)
+			{
+				BEcounter2++;
+				if (BEcounter2 % 19 == 0)
+				{
+					if (bossbullet2[i].show() == false && bossbullet3[i].show() == false && bossbullet4[i].show() == false)
+					{
+						bossbullet2[i].active();
+						bossbullet2[i].init(boss.x_pos, boss.y_pos + 150);
+						bossbullet3[i].active();
+						bossbullet3[i].init(boss.x_pos, boss.y_pos + 150);
+						bossbullet4[i].active();
+						bossbullet4[i].init(boss.x_pos, boss.y_pos + 150);
+					}
+				}
+			}
+			for (int i = 0; i < BOSS_NUM; i++)
+			{
+				if (bossbullet2[i].show() == true)
+				{
+					if (bossbullet2[i].x_pos < -64)
+					{
+						bossbullet2[i].hide();
+					}
+					else
+						bossbullet2[i].move();
+					if (bossbullet2[i].check_collision(hero.x_pos, hero.y_pos) == true)
+					{
+						hero.active();
+						hero.hit_init(hero.x_pos, (hero.y_pos) - 5);
+					}
+				}
+				if (bossbullet3[i].show() == true)
+				{
+					if (bossbullet3[i].x_pos < -64)
+					{
+						bossbullet3[i].hide();
+					}
+					else
+						bossbullet3[i].move();
+					if (bossbullet3[i].check_collision(hero.x_pos, hero.y_pos) == true)
+					{
+						hero.active();
+						hero.hit_init(hero.x_pos, (hero.y_pos) - 5);
+					}
+				}
+				if (bossbullet4[i].show() == true)
+				{
+					if (bossbullet4[i].x_pos < -64)
+					{
+						bossbullet4[i].hide();
+					}
+					else
+						bossbullet4[i].move();
+					if (bossbullet4[i].check_collision(hero.x_pos, hero.y_pos) == true)
+					{
+						hero.active();
+						hero.hit_init(hero.x_pos, (hero.y_pos) - 5);
 					}
 				}
 			}
@@ -2632,6 +2773,55 @@ void render_frame(void)
 				d3dspt->Draw(sprite_boss4, &part0, &center0, &position0, D3DCOLOR_ARGB(255, 255, 255, 255));
 				break;
 			}
+			//보스총알
+			RECT part3;
+			SetRect(&part3, 0, 0, 30, 29);
+			D3DXVECTOR3 center3(0.0f, 0.0f, 0.0f);    // center at the upper-left corner
+			for (int i = 0; i < BOSS_NUM; i++)
+			{
+				D3DXVECTOR3 position3(bossbullet[i].x_pos, bossbullet[i].y_pos, 0.0f);    // position at 50, 50 with no depth
+				if (bossbullet[i].bShow == true || bossbullet[i].x_pos <= 0)
+				{
+					d3dspt->Draw(sprite_boss_bullet, &part3, &center3, &position3, D3DCOLOR_ARGB(255, 255, 255, 255));
+				}
+			}
+			for (int i = 0; i < BOSS_NUM; i++)
+			{
+				D3DXVECTOR3 position3(bossbullet5[i].x_pos, bossbullet5[i].y_pos, 0.0f);    // position at 50, 50 with no depth
+				if (bossbullet5[i].bShow == true || bossbullet5[i].x_pos <= 0)
+				{
+					d3dspt->Draw(sprite_boss_bullet, &part3, &center3, &position3, D3DCOLOR_ARGB(255, 255, 255, 255));
+				}
+			}
+			
+			
+			for (int i = 0; i < BOSS_NUM; i++)
+			{
+				if (bossbullet2[i].bShow == true || bossbullet2[i].x_pos <= 0)
+				{
+					RECT part4;
+					SetRect(&part4, 0, 0, 30, 29);
+					D3DXVECTOR3 center4(0.0f, 0.0f, 0.0f);
+					D3DXVECTOR3 position4(bossbullet2[i].x_pos, bossbullet2[i].y_pos, 0.0f);
+					d3dspt->Draw(sprite_boss_bullet, &part3, &center3, &position4, D3DCOLOR_ARGB(255, 255, 255, 255));
+				}
+				if (bossbullet3[i].bShow == true || bossbullet3[i].x_pos <= 0)
+				{
+					RECT part5;
+					SetRect(&part5, 0, 0, 30, 29);
+					D3DXVECTOR3 center5(0.0f, 0.0f, 0.0f);
+					D3DXVECTOR3 position5(bossbullet3[i].x_pos, bossbullet3[i].y_pos, 0.0f);
+					d3dspt->Draw(sprite_boss_bullet, &part5, &center5, &position5, D3DCOLOR_ARGB(255, 255, 255, 255));
+				}
+				if (bossbullet4[i].bShow == true || bossbullet4[i].x_pos <= 0)
+				{
+					RECT part6;
+					SetRect(&part6, 0, 0, 30, 29);
+					D3DXVECTOR3 center6(0.0f, 0.0f, 0.0f);
+					D3DXVECTOR3 position6(bossbullet4[i].x_pos, bossbullet4[i].y_pos, 0.0f);
+					d3dspt->Draw(sprite_boss_bullet, &part6, &center6, &position6, D3DCOLOR_ARGB(255, 255, 255, 255));
+				}
+			}
 		}
 		d3dspt->End();    // end sprite drawing
 
@@ -2667,7 +2857,8 @@ void cleanD3D(void)
 	//sprite_bullet->Release();
 	//sprite_bullet2->Release();
 	//sprite_bullet3->Release();
-
+	sprite_boss->Release();
+	//sprite_boss_bullet->Release();
 	sprite_enemy->Release();
 	sprite_enemy_bullet->Release();
 
