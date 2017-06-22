@@ -5,7 +5,7 @@ bool sphere_collision_check(float x0, float y0, float size0, float x1, float y1,
 
 Boss::Boss()
 {
-	HP = 1000;
+	HP = 2000;
 }
 
 void Boss::init(float x, float y)

@@ -111,6 +111,10 @@ int dwID;
 MCI_OPEN_PARMS mci_open2;
 MCI_PLAY_PARMS mci_play2;
 int dwID2;
+//음악파일 재생(boss)
+MCI_OPEN_PARMS mci_open3;
+MCI_PLAY_PARMS mci_play3;
+int dwID3;
 
 void initD3D(HWND hWnd);    // sets up and initializes Direct3D
 void render_frame(void);    // renders a single frame
@@ -196,6 +200,9 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	
 	mci_open2.lpstrElementName = L"INGAME_bgm.mp3";
 	mci_open2.lpstrDeviceType = L"MPEGvideo";
+
+	mci_open3.lpstrElementName = L"Boss_bgm.mp3";
+	mci_open3.lpstrDeviceType = L"MPEGvideo";
 	
 	
 
@@ -900,7 +907,7 @@ void do_game_logic(void)
 			for (int i = 0; i < BULLET_NUM; i++)
 			{
 				BCounter++;
-				if (BCounter % 8 == 0)
+				if (BCounter % 9 == 0)
 				{
 					if (bullet[i].show() == false)
 					{
@@ -928,7 +935,7 @@ void do_game_logic(void)
 		}
 		//보스등장
 		static int hit_counter = 0;
-		if (boss.boss_show == false)
+		if (boss.boss_show == true)
 		{
 			for (int i = 0; i < ENEMY_NUM; i++)
 			{
@@ -943,7 +950,6 @@ void do_game_logic(void)
 			{
 				if (boss.check_collision(bullet[i].x_pos, bullet[i].y_pos) == true)
 				{
-					sndPlaySoundA("C:\\Users\\Administrator.MSDN-SPECIAL\\Documents\\GitHub\\DirectX-Game\\Shooting Game\\Enemy_hit.wav", SND_ASYNC | SND_NODEFAULT | SND_ASYNC);
 					boss.HP -= 1;
 					if (boss.HP <= 0)
 					{
@@ -969,7 +975,6 @@ void do_game_logic(void)
 			{
 				if (boss.check_collision(bullet3[i].x_pos, bullet3[i].y_pos) == true)
 				{
-					sndPlaySoundA("C:\\Users\\Administrator.MSDN-SPECIAL\\Documents\\GitHub\\DirectX-Game\\Shooting Game\\Enemy_hit.wav", SND_ASYNC | SND_NODEFAULT | SND_ASYNC);
 					boss.HP -= 1;
 					if (boss.HP <= 0)
 					{
@@ -2193,6 +2198,10 @@ void render_frame(void)
 
 	if (Scene1 == true)
 	{
+		//ingame 배경음 끄기
+		mciSendCommand(2, MCI_SEEK, MCI_SEEK_TO_START, (DWORD)(LPVOID)NULL);
+		//보스 배경음 끄기
+		mciSendCommand(3, MCI_SEEK, MCI_SEEK_TO_START, (DWORD)(LPVOID)NULL);
 		//ui 배경음 재생
 		mciSendCommand(NULL, MCI_OPEN, MCI_OPEN_ELEMENT | MCI_OPEN_TYPE, (DWORD)(LPVOID)&mci_open);
 		dwID = mci_open.wDeviceID;
@@ -2592,29 +2601,38 @@ void render_frame(void)
 			}
 		}
 		//보스 애니메이션
-		RECT part0;
-		SetRect(&part0, 0, 0, 300, 300);
-		D3DXVECTOR3 center0(0.0f, 0.0f, 0.0f);
-		D3DXVECTOR3 position0(boss.x_pos, boss.y_pos, 0.0f);
-		static int kcounter = 0;
-		kcounter += 1;
-		if (kcounter >= 20) kcounter = 0;
-		switch (kcounter / 5)
+		if (boss.boss_show == true)
 		{
-		case 0:
-			d3dspt->Draw(sprite_boss, &part0, &center0, &position0, D3DCOLOR_ARGB(255, 255, 255, 255));
-			break;
-		case 1:
-			d3dspt->Draw(sprite_boss2, &part0, &center0, &position0, D3DCOLOR_ARGB(255, 255, 255, 255));
-			break;
-		case 2:
-			d3dspt->Draw(sprite_boss3, &part0, &center0, &position0, D3DCOLOR_ARGB(255, 255, 255, 255));
-			break;
-		case 3:
-			d3dspt->Draw(sprite_boss4, &part0, &center0, &position0, D3DCOLOR_ARGB(255, 255, 255, 255));
-			break;
-		}
+			//ingame 배경음 끄기
+			mciSendCommand(2, MCI_SEEK, MCI_SEEK_TO_START, (DWORD)(LPVOID)NULL);
+			//보스 배경음 키기
+			mciSendCommand(NULL, MCI_OPEN, MCI_OPEN_ELEMENT | MCI_OPEN_TYPE, (DWORD)(LPVOID)&mci_open3);
+			dwID3 = mci_open3.wDeviceID;
+			mciSendCommand(dwID3, MCI_PLAY, MCI_NOTIFY, (DWORD)(LPVOID)&mci_play3);
 
+			RECT part0;
+			SetRect(&part0, 0, 0, 300, 300);
+			D3DXVECTOR3 center0(0.0f, 0.0f, 0.0f);
+			D3DXVECTOR3 position0(boss.x_pos, boss.y_pos, 0.0f);
+			static int kcounter = 0;
+			kcounter += 1;
+			if (kcounter >= 20) kcounter = 0;
+			switch (kcounter / 5)
+			{
+			case 0:
+				d3dspt->Draw(sprite_boss, &part0, &center0, &position0, D3DCOLOR_ARGB(255, 255, 255, 255));
+				break;
+			case 1:
+				d3dspt->Draw(sprite_boss2, &part0, &center0, &position0, D3DCOLOR_ARGB(255, 255, 255, 255));
+				break;
+			case 2:
+				d3dspt->Draw(sprite_boss3, &part0, &center0, &position0, D3DCOLOR_ARGB(255, 255, 255, 255));
+				break;
+			case 3:
+				d3dspt->Draw(sprite_boss4, &part0, &center0, &position0, D3DCOLOR_ARGB(255, 255, 255, 255));
+				break;
+			}
+		}
 		d3dspt->End();    // end sprite drawing
 
 		d3ddev->EndScene();    // ends the 3D scene
