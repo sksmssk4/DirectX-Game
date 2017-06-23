@@ -995,7 +995,7 @@ void init_game(void)
 void do_game_logic(void)
 {
 
-	if (boss.y_pos < 30)//스테이지 클리어조건
+	if (boss.y_pos < 0)//스테이지 클리어조건
 	{
 		Scene3 = true;
 		Scene2 = false;
@@ -1076,6 +1076,8 @@ void do_game_logic(void)
 				if (hero_counter <= 0)
 				{
 					Scene2 = false;
+					mciSendCommand(2, MCI_SEEK, MCI_SEEK_TO_START, (DWORD)(LPVOID)NULL);
+					mciSendCommand(3, MCI_SEEK, MCI_SEEK_TO_START, (DWORD)(LPVOID)NULL);
 					Scene4 = true;
 				}
 			}
@@ -1128,7 +1130,7 @@ void do_game_logic(void)
 		}
 		//보스등장
 		static int hit_counter = 0;
-		static int boss_counter = 500;
+		static int boss_counter = 1000;
 		if (boss.boss_show == true)
 		{
 			for (int i = 0; i < ENEMY_NUM; i++)
@@ -1148,7 +1150,7 @@ void do_game_logic(void)
 					if (boss_counter <= 0)
 					{
 						Death = true;
-						boss.y_pos--;
+						boss.y_pos -= 10 ;
 					}
 				}
 			}
@@ -1161,7 +1163,7 @@ void do_game_logic(void)
 					if (boss_counter <= 0)
 					{
 						Death = true;;
-						boss.y_pos--;
+						boss.y_pos -= 10;
 					}
 				}
 			}
@@ -1173,7 +1175,7 @@ void do_game_logic(void)
 					if (boss_counter <= 0)
 					{
 						Death = true;
-						boss.y_pos--; //스테이지 클리어 조건
+						 boss.y_pos -= 10; //스테이지 클리어 조건
 					}
 				}
 			}
@@ -3088,6 +3090,10 @@ void render_frame(void)
 	}
 	if (Scene4)
 	{
+		//오버 브금 켜기
+		mciSendCommand(NULL, MCI_OPEN, MCI_OPEN_ELEMENT | MCI_OPEN_TYPE, (DWORD)(LPVOID)&mci_open5);
+		dwID5 = mci_open5.wDeviceID;
+		mciSendCommand(dwID5, MCI_PLAY, MCI_NOTIFY, (DWORD)(LPVOID)&mci_play5);
 
 		d3ddev->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 
@@ -3095,14 +3101,14 @@ void render_frame(void)
 
 		d3dspt->Begin(D3DXSPRITE_ALPHABLEND);
 
-		//인게임 , 보스 브금 끄기
-		mciSendCommand(2, MCI_SEEK, MCI_SEEK_TO_START, (DWORD)(LPVOID)NULL);
-		mciSendCommand(3, MCI_SEEK, MCI_SEEK_TO_START, (DWORD)(LPVOID)NULL);
+		// 보스 브금 끄기
 
-		//오버 브금 켜기
-		mciSendCommand(NULL, MCI_OPEN, MCI_OPEN_ELEMENT | MCI_OPEN_TYPE, (DWORD)(LPVOID)&mci_open5);
-		dwID5 = mci_open5.wDeviceID;
-		mciSendCommand(dwID5, MCI_PLAY, MCI_NOTIFY, (DWORD)(LPVOID)&mci_play5);
+			
+
+		
+
+	
+
 
 		
 		RECT part6;
