@@ -17,9 +17,9 @@ void Boss::init(float x, float y)
 
 void Boss::move()
 {
-	x_pos -= 4;
+	x_pos -= 5;
 	if (x_pos <= 550)
-		x_pos += 4;
+		x_pos += 5;
 }
 bool Boss::check_collision(float x, float y)
 {

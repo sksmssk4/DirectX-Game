@@ -1,4 +1,44 @@
-﻿  LINK : C:\Users\Administrator.MSDN-SPECIAL\Documents\GitHub\DirectX-Game\Shooting Game\Debug\Matrices49860489.exe을(를) 찾을 수 없거나 마지막 증분 링크에 의해 빌드되지 않았습니다. 전체 링크를 수행하고 있습니다.
-Bg.obj : warning LNK4075: '/EDITANDCONTINUE'이(가) '/SAFESEH' 사양으로 인해 무시됩니다.
+﻿  Matrices49860489.cpp
+c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(196): warning C4100: 'lpCmdLine': 참조되지 않은 정식 매개 변수입니다.
+c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(195): warning C4100: 'hPrevInstance': 참조되지 않은 정식 매개 변수입니다.
+c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(1322): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(1701): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(2080): warning C4244: '인수': 'int'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(2611): warning C4456: 'Spart1' 선언은 이전 로컬 선언을 숨깁니다.
+  c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(2596): note: 'Spart1' 선언을 참조하십시오.
+c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(2613): warning C4456: 'Scenter1' 선언은 이전 로컬 선언을 숨깁니다.
+  c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(2598): note: 'Scenter1' 선언을 참조하십시오.
+c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(2614): warning C4456: 'Sposition1' 선언은 이전 로컬 선언을 숨깁니다.
+  c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(2599): note: 'Sposition1' 선언을 참조하십시오.
+c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(2621): warning C4456: 'Spart1' 선언은 이전 로컬 선언을 숨깁니다.
+  c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(2596): note: 'Spart1' 선언을 참조하십시오.
+c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(2623): warning C4456: 'Scenter1' 선언은 이전 로컬 선언을 숨깁니다.
+  c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(2598): note: 'Scenter1' 선언을 참조하십시오.
+c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(2624): warning C4456: 'Sposition1' 선언은 이전 로컬 선언을 숨깁니다.
+  c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(2599): note: 'Sposition1' 선언을 참조하십시오.
+c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(2630): warning C4456: 'Spart2' 선언은 이전 로컬 선언을 숨깁니다.
+  c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(2602): note: 'Spart2' 선언을 참조하십시오.
+c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(2632): warning C4456: 'Scenter2' 선언은 이전 로컬 선언을 숨깁니다.
+  c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(2604): note: 'Scenter2' 선언을 참조하십시오.
+c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(2633): warning C4456: 'Sposition2' 선언은 이전 로컬 선언을 숨깁니다.
+  c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(2605): note: 'Sposition2' 선언을 참조하십시오.
+c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(2707): warning C4456: 'Spart1' 선언은 이전 로컬 선언을 숨깁니다.
+  c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(2596): note: 'Spart1' 선언을 참조하십시오.
+c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(2709): warning C4456: 'Scenter1' 선언은 이전 로컬 선언을 숨깁니다.
+  c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(2598): note: 'Scenter1' 선언을 참조하십시오.
+c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(2710): warning C4456: 'Sposition1' 선언은 이전 로컬 선언을 숨깁니다.
+  c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(2599): note: 'Sposition1' 선언을 참조하십시오.
+c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(2716): warning C4456: 'Spart2' 선언은 이전 로컬 선언을 숨깁니다.
+  c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(2602): note: 'Spart2' 선언을 참조하십시오.
+c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(2718): warning C4456: 'Scenter2' 선언은 이전 로컬 선언을 숨깁니다.
+  c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(2604): note: 'Scenter2' 선언을 참조하십시오.
+c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(2719): warning C4456: 'Sposition2' 선언은 이전 로컬 선언을 숨깁니다.
+  c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(2605): note: 'Sposition2' 선언을 참조하십시오.
+c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(2968): warning C4456: 'part0' 선언은 이전 로컬 선언을 숨깁니다.
+  c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(2944): note: 'part0' 선언을 참조하십시오.
+c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(2974): warning C4456: 'center0' 선언은 이전 로컬 선언을 숨깁니다.
+  c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(2946): note: 'center0' 선언을 참조하십시오.
+c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(2975): warning C4456: 'position0' 선언은 이전 로컬 선언을 숨깁니다.
+  c:\users\administrator.msdn-special\documents\github\directx-game\shooting game\matrices49860489.cpp(2947): note: 'position0' 선언을 참조하십시오.
   Matrices49860489_2010.vcxproj -> C:\Users\Administrator.MSDN-SPECIAL\Documents\GitHub\DirectX-Game\Shooting Game\Debug\Matrices49860489.exe
   Matrices49860489_2010.vcxproj -> C:\Users\Administrator.MSDN-SPECIAL\Documents\GitHub\DirectX-Game\Shooting Game\Debug\Matrices49860489.pdb (Full PDB)
